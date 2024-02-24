@@ -1,4 +1,4 @@
-# AstroForceModels
+# AstroForceModels.jl
 
 [![CI](https://github.com/jmurphy6895/AstroForceModels.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/jmurphy6895/AstroForceModels.jl/actions/workflows/CI.yml?query=branch%3Amaster)
 [![codecov](https://codecov.io/gh/jmurphy6895/AstroForceModels.jl/branch/main/graph/badge.svg?token=47G4OLV6PD)](https://codecov.io/gh/jmurphy6895/AstroForceModels.jl)
@@ -21,13 +21,13 @@ This package contains the dominant astrodynamics forces affecting the orbtial tr
 
 ```julia
 julia> using Pkg
-julia> Pkg.install("AstroForceModels")
+julia> Pkg.add("AstroForceModels")
 ```
 
 ## Documentation
 
 For more information, see the [documentation][docs-stable-url].
 
-## UPDATE WITH OUR DOCS
+[comment]: <>  UPDATE WITH OUR DOCS
 [docs-dev-url]: https://juliaspace.github.io/SatelliteToolboxGravityModels.jl/dev
 [docs-stable-url]: https://juliaspace.github.io/SatelliteToolboxGravityModels.jl/stable
