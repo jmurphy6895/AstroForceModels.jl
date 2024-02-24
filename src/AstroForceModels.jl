@@ -1,8 +1,14 @@
 module AstroForceModels
 
+using LinearAlgebra
+using SatelliteToolkitCelestialBodies,
+    SatelliteToolkitGravityModels, SatelliteToolkitAtmosphericModels
+
 include("./force_models/drag/satellite_shape_model.jl")
 include("./force_models/drag/density_calculator.jl")
 include("./force_models/drag/drag_accel.jl")
+
+include("./force_models/relativity/relativity_accel.jl")
 
 include("./force_models/solar_radiation_pressure/satellite_shape_model.jl")
 include("./force_models/solar_radiation_pressure/shadow_models.jl")

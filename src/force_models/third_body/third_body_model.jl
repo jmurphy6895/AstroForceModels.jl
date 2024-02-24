@@ -11,5 +11,5 @@ end
 function (model::ThirdBodyModel)(t::Number)
 
     return model.body(t)
-    
+
 end

@@ -19,14 +19,15 @@ export DragAstroModel, drag_accel
 struct DragAstroModel <: AbstractNonPotentialBasedForce
     satellite_drag_model::AbstractSatelliteDragModel
     atmosphere_model::Symbol
-    eop_data::Union{EOPData_IAU1980, EOPData_IAU2000A}
+    eop_data::Union{EOPData_IAU1980,EOPData_IAU2000A}
 end
 
 function acceleration(
-    drag_model::DragAstroModel, 
-    u::AbstractArray, 
-    p::ComponentVector, 
-    t::Number)
+    drag_model::DragAstroModel,
+    u::AbstractArray,
+    p::ComponentVector,
+    t::Number,
+)
 
     rho = compute_density(p.JD, u, drag_model.eop_data, drag_model.atmosphere_model)
 
@@ -79,12 +80,13 @@ The acceleration from drag is then computed with a cannonball model as
     rho::Number,
     BC::Number,
     ω_vec::AbstractArray,
-    t::Number)
+    t::Number,
+)
 
     # Compute Apparent Velocity w.r.t the Atmosphere using the Transport Theorem
     apparent_vel = @view(u[4:6]) - cross(ω_vec, @view(u[1:3]))
 
     # Scaled by 1E3 to convert to km/s
-    return SVector{3}((-.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3)
+    return SVector{3}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3)
 
 end

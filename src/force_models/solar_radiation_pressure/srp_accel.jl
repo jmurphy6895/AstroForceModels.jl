@@ -22,10 +22,11 @@ struct SRPAstroModel <: AbstractNonPotentialBasedForce
 end
 
 function acceleration(
-    srp_model::DragAstroModel, 
-    u::AbstractArray, 
-    p::ComponentVector, 
-    t::Number)
+    srp_model::DragAstroModel,
+    u::AbstractArray,
+    p::ComponentVector,
+    t::Number,
+)
 
     R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), JD, eop_data)
 
@@ -81,7 +82,8 @@ function srp_accel(
     Ψ::Number,
     RC::Number,
     t::Number;
-    ShadowModel::Symbol=:Conical)
+    ShadowModel::Symbol = :Conical,
+)
 
     sat_pos = @view(u[1:3])
 
@@ -92,7 +94,12 @@ function srp_accel(
     R_spacecraft_Sun = sat_pos - sun_pos
 
     #Compute the SRP Force
-    return SVector{3}((F * RC * Ψ * (ASTRONOMICAL_UNIT/norm(R_spacecraft_Sun))^2 * R_spacecraft_Sun/norm(R_spacecraft_Sun)) ./ 1E3)
+    return SVector{3}(
+        (
+            F * RC * Ψ * (ASTRONOMICAL_UNIT / norm(R_spacecraft_Sun))^2 * R_spacecraft_Sun /
+            norm(R_spacecraft_Sun)
+        ) ./ 1E3,
+    )
 
 end
 
@@ -102,7 +109,8 @@ end
     Ψ::Number,
     RC::Number,
     t::Number;
-    ShadowModel::Symbol=:Conical)
+    ShadowModel::Symbol = :Conical,
+)
 
     return @SVector zeros(3)
 
@@ -115,9 +123,10 @@ end
     Ψ::Number,
     RC::Number,
     t::Number;
-    ShadowModel::Symbol=:Conical) 
-    
-    return srp_accel(u, sun_pos, Ψ, RC, t, :Cannonball; ShadowModel=ShadowModel)
+    ShadowModel::Symbol = :Conical,
+)
+
+    return srp_accel(u, sun_pos, Ψ, RC, t, :Cannonball; ShadowModel = ShadowModel)
 
 end
 
@@ -128,7 +137,8 @@ end
     RC::Number,
     t::Number,
     Val(SRPModel::Symbol);
-    ShadowModel::Symbol=:Conical)
+    ShadowModel::Symbol = :Conical,
+)
 
     error("Model Not Defined for $SRPModel")
 

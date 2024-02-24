@@ -18,7 +18,7 @@ function acceleration(
     third_body_model::ThirdBodyModel,
     u::AbstractArray,
     p::ComponentVector,
-    t::Number
+    t::Number,
 )
 
     body_pos = third_body_model(t)
@@ -49,17 +49,16 @@ spacecraft 𝐀 in the orbiting body's 𝐂 is part of the force not acting on t
 
 - `SVector{3}{Number}`: Inertial acceleration from the 3rd body
 """
-@inline function third_body_accel(
-    u::AbstractArray,
-    μ_body::Number,
-    body_pos::AbstractArray) 
+@inline function third_body_accel(u::AbstractArray, μ_body::Number, body_pos::AbstractArray)
 
     # Compute Position Vectors for the Spacecraft w.r.t the Central and 3rd Body Respectively
     sat_pos = @view(u[1:3])
     r_spacecraft_to_body = body_pos - sat_pos
 
     # Calculate and Return the Acceleration from the Difference in Potential
-    return SVector{3}(μ_body * (r_spacecraft_to_body/(norm(r_spacecraft_to_body)^3)) -
-        μ_body * (body_pos/(norm(body_pos)^3)))
+    return SVector{3}(
+        μ_body * (r_spacecraft_to_body / (norm(r_spacecraft_to_body)^3)) -
+        μ_body * (body_pos / (norm(body_pos)^3)),
+    )
 
 end
