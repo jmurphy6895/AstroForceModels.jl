@@ -22,7 +22,7 @@ struct SRPAstroModel <: AbstractNonPotentialBasedForce
 end
 
 function acceleration(
-    srp_model::DragAstroModel,
+    srp_model::SRPAstroModel,
     u::AbstractArray,
     p::ComponentVector,
     t::Number,
@@ -100,46 +100,5 @@ function srp_accel(
             norm(R_spacecraft_Sun)
         ) ./ 1E3,
     )
-
-end
-
-@inline function srp_accel(
-    u::AbstractArray,
-    sun_pos::AbstractArray,
-    Ψ::Number,
-    RC::Number,
-    t::Number;
-    ShadowModel::Symbol = :Conical,
-)
-
-    return @SVector zeros(3)
-
-end
-
-
-@inline function srp_accel(
-    u::AbstractArray,
-    sun_pos::AbstractArray,
-    Ψ::Number,
-    RC::Number,
-    t::Number;
-    ShadowModel::Symbol = :Conical,
-)
-
-    return srp_accel(u, sun_pos, Ψ, RC, t, :Cannonball; ShadowModel = ShadowModel)
-
-end
-
-@valsplit function srp_accel(
-    u::AbstractArray,
-    sun_pos::AbstractArray,
-    Ψ::Number,
-    RC::Number,
-    t::Number,
-    Val(SRPModel::Symbol);
-    ShadowModel::Symbol = :Conical,
-)
-
-    error("Model Not Defined for $SRPModel")
 
 end

@@ -1,5 +1,5 @@
 #TODO: THIS PROBABLY BELONGS IN SATELLITE TOOLKIT CELESTIAL BODY
-struct CelestialBody{T<:Number,V<:Number} <: CelestialBody
+struct CelestialBody{T<:Number,V<:Number}
     name::String
     central_body::String
     jpl_code::Int64

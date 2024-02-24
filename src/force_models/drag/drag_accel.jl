@@ -19,7 +19,7 @@ export DragAstroModel, drag_accel
 struct DragAstroModel <: AbstractNonPotentialBasedForce
     satellite_drag_model::AbstractSatelliteDragModel
     atmosphere_model::Symbol
-    eop_data::Union{EOPData_IAU1980,EOPData_IAU2000A}
+    eop_data::EopIau1980
 end
 
 function acceleration(

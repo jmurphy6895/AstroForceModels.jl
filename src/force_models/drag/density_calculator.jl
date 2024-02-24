@@ -1,7 +1,7 @@
 @inline function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     AtmosphereType::Val{:JB2008},
 )
 
@@ -14,9 +14,9 @@
 end
 
 @inline function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     AtmosphereType::Val{:JR1971},
 )
 
@@ -29,9 +29,9 @@ end
 end
 
 @inline function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     AtmosphereType::Val{:MSIS2000},
 )
 
@@ -44,9 +44,9 @@ end
 end
 
 @inline function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     AtmosphereType::Val{:ExpAtmo},
 )
 
@@ -60,9 +60,9 @@ end
 end
 
 @inline function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     AtmosphereType::Val{:None},
 )
 
@@ -71,9 +71,9 @@ end
 end
 
 @valsplit function compute_density(
-    JD::T,
+    JD::Number,
     u::AbstractArray,
-    eop_data::EOPData_IAU1980,
+    eop_data::EopIau1980,
     Val(AtmosphereType::Symbol),
 )
 
