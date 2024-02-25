@@ -18,6 +18,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaSpace/SatelliteToolboxGravityModels.jl.git",
+    repo = "github.com/jmurphy6895/AstroForceModels.jl.git",
     target = "build",
 )
