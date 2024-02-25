@@ -30,5 +30,5 @@ For more information, see the [documentation][docs-stable-url].
 
 [comment]: <>  UPDATE WITH OUR DOCS
 
-[docs-dev-url]: https//jmurphy6895.github.io/AstroForceModels.jl/stable/
-[docs-stable-url]: https//jmurphy6895.github.io/AstroForceModels.jl/stable/
+[docs-dev-url]: https://jmurphy6895.github.io/AstroForceModels.jl/stable/
+[docs-stable-url]: https://jmurphy6895.github.io/AstroForceModels.jl/stable/
