@@ -3,7 +3,7 @@ using AstroForceModels
 
 makedocs(
     modules = [AstroForceModels],
-    format=Documenter.HTML(; prettyurls=CI, highlights=["yaml"], ansicolor=true), 
+    format=Documenter.HTML(; prettyurls=!("local" in ARGS), highlights=["yaml"], ansicolor=true), 
     sitename = "AstroForceModels.jl",
     authors = "Jordan Murphy",
     pages = [
