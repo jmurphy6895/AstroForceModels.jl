@@ -1,5 +1,9 @@
 name: Format suggestions
 on:
+  push:
+    branches:
+      - master
+    tags: '*'
   pull_request:
 jobs:
   code-style:
