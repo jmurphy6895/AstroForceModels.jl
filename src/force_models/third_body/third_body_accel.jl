@@ -15,16 +15,11 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function acceleration(
-    third_body_model::ThirdBodyModel,
-    u::AbstractArray,
-    p::ComponentVector,
-    t::Number,
+    third_body_model::ThirdBodyModel, u::AbstractArray, p::ComponentVector, t::Number
 )
-
     body_pos = third_body_model(t)
 
     return third_body_accel(u, third_body_model.μ, body_pos)
-
 end
 
 export third_body_accel
@@ -60,5 +55,4 @@ spacecraft 𝐀 in the orbiting body's 𝐂 is part of the force not acting on t
         μ_body * (r_spacecraft_to_body / (norm(r_spacecraft_to_body)^3)) -
         μ_body * (body_pos / (norm(body_pos)^3)),
     )
-
 end

@@ -1,7 +1,7 @@
 AstroForceModels.jl
 ================================
 
-This package contains the dominant astrodynamics forces affecting the orbtial trajectory of a satellite for the **SatelliteToolbox.jl** ecosystem. Currently this package implents:
+This package contains the dominant astrodynamics forces affecting the orbital trajectory of a satellite for the **SatelliteToolbox.jl** ecosystem. Currently this package implements:
 - [] Zonal Harmonics
 - [] Solar Radiation Pressure
 - [] Drag

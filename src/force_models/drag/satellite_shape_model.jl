@@ -12,7 +12,6 @@ function Cannonball_Fixed_Drag(ballistic_coeff::Number)
 end
 
 function Cannonball_Fixed_Drag(radius::Number, mass::Number, drag_coeff::Number)
-
     area = π * radius^2.0
 
     return Cannonball_Fixed_Drag(radius, mass, drag_coeff, drag_coeff * area / mass)

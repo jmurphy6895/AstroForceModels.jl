@@ -27,8 +27,6 @@ include("./force_models/solar_radiation_pressure/satellite_shape_model.jl")
 include("./force_models/solar_radiation_pressure/shadow_models.jl")
 include("./force_models/solar_radiation_pressure/srp_accel.jl")
 
-
 export acceleration
-
 
 end
