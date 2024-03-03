@@ -2,7 +2,7 @@
 struct CelestialBody{T<:Number,V<:Number}
     name::String
     central_body::String
-    jpl_code::Int64
+    jpl_code::Int
     ephemeris::Function
     epoch::String
 
@@ -16,19 +16,18 @@ Creates a CelestialBody Object from a name
 Available: {Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, }
 
 Arguments:
--'name::String': Name of the Planet Object (Casing Doesn't Matter)
--(Optional) 'T::DataType': Datatype of PlanetBody Fields
+- `name::String`: Name of the Planet Object (Casing Doesn't Matter)
+- (Optional) `T::DataType``: Datatype of PlanetBody Fields
 
 Returns:
--'CelestialBody': PlanetBody Object with Fields:
-    name::String: Name of Object
-    central_body::String: Name of Central Body Being Orbited
-    jpl_code::Int64: NAIF ID Code
-    ephemeris::Function: Ephemeris Object 
+-`CelestialBody`: PlanetBody Object with Fields:
+    - `name::String`: Name of Object
+    - `central_body::String`: Name of Central Body Being Orbited
+    - `jpl_code::Int`: NAIF ID Code
+    - `ephemeris::Function`: Ephemeris Object 
 
-    μ::T: Graviational Parameter [km/s]
-    Req::T: Equatorial Radius [km]
-
+    - μ::T: Graviational Parameter [km/s]
+    - Req::T: Equatorial Radius [km]
 """
 function CelestialBody(name::String; T::DataType=Float64)
     if lowercase(name) == "sun"
