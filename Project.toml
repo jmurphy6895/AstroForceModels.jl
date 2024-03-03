@@ -14,10 +14,13 @@ StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 ValSplit = "0625e100-946b-11ec-09cd-6328dd093154"
 
 [compat]
+ComponentArrays = "0.15"
 SatelliteToolboxAtmosphericModels = "0.1"
 SatelliteToolboxCelestialBodies = "0.1"
 SatelliteToolboxGravityModels = "0.1"
 SatelliteToolboxTransformations = "0.1"
+StaticArraysCore = "1"
+ValSplit = "0.1"
 julia = "1.9"
 
 [extras]
