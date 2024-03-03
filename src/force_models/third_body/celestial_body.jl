@@ -2,7 +2,7 @@
 struct CelestialBody{T<:Number,V<:Number}
     name::String
     central_body::String
-    jpl_code::Int64
+    jpl_code::Int
     ephemeris::Function
     epoch::String
 
@@ -10,29 +10,26 @@ struct CelestialBody{T<:Number,V<:Number}
     Req::V
 end
 
-
 export CelestialBody
 """
 Creates a CelestialBody Object from a name
 Available: {Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, }
 
 Arguments:
--'name::String': Name of the Planet Object (Casing Doesn't Matter)
--(Optional) 'T::DataType': Datatype of PlanetBody Fields
+- `name::String`: Name of the Planet Object (Casing Doesn't Matter)
+- (Optional) `T::DataType``: Datatype of PlanetBody Fields
 
 Returns:
--'CelestialBody': PlanetBody Object with Fields:
-    name::String: Name of Object
-    central_body::String: Name of Central Body Being Orbited
-    jpl_code::Int64: NAIF ID Code
-    ephemeris::Function: Ephemeris Object 
+-`CelestialBody`: PlanetBody Object with Fields:
+    - `name::String`: Name of Object
+    - `central_body::String`: Name of Central Body Being Orbited
+    - `jpl_code::Int`: NAIF ID Code
+    - `ephemeris::Function`: Ephemeris Object 
 
-    μ::T: Graviational Parameter [km/s]
-    Req::T: Equatorial Radius [km]
-
+    - μ::T: Graviational Parameter [km/s]
+    - Req::T: Equatorial Radius [km]
 """
-function CelestialBody(name::String; T::DataType = Float64)
-
+function CelestialBody(name::String; T::DataType=Float64)
     if lowercase(name) == "sun"
         println("Creating Sun")
         return SunBody{T,T}(
@@ -55,7 +52,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             2439.7,
         )                         # Equatorial Radius (km)
 
-
     elseif lowercase(name) == "venus"
         println("Creating Venus")
         return PlanetBody{T,T}(
@@ -66,7 +62,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             3.24858599E5,                   # μ (km/s)
             6051.8,
         )                         # Equatorial Radius (km)
-
 
     elseif lowercase(name) == "earth"
         println("Creating Earth")
@@ -79,7 +74,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             6051.8,
         )                         # Equatorial Radius (km)
 
-
     elseif lowercase(name) == "mars"
         println("Creating Mars")
         return PlanetBody{T,T}(
@@ -90,7 +84,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             4.28283100E4,                   # μ (km/s)
             3396.19,
         )                        # Equatorial Radius (km)
-
 
     elseif lowercase(name) == "jupiter"
         println("Creating Jupiter")
@@ -103,7 +96,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             71492.0,
         )                        # Equatorial Radius (km)
 
-
     elseif lowercase(name) == "saturn"
         println("Creating Saturn")
         return PlanetBody{T,T}(
@@ -114,7 +106,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             3.7931208E7,                    # μ (km/s)
             60268.0,
         )                        # Equatorial Radius (km)
-
 
     elseif lowercase(name) == "uranus"
         println("Creating Uranus")
@@ -127,7 +118,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             25559.0,
         )                        # Equatorial Radius (km)
 
-
     elseif lowercase(name) == "neptune"
         println("Creating Neptune")
         return PlanetBody{T,T}(
@@ -139,7 +129,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             24764.0,
         )                        # Equatorial Radius (km)
 
-
     elseif lowercase(name) == "pluto"
         println("Creating Pluto")
         return PlanetBody{T,T}(
@@ -150,7 +139,6 @@ function CelestialBody(name::String; T::DataType = Float64)
             8.71E2,                         # μ (km/s)
             1188.3,
         )                         # Equatorial Radius (km)
-
 
     #TODO: UPDATE EPHEMERIS
     elseif lowercase(name) == "ceres"
@@ -207,7 +195,6 @@ function CelestialBody(name::String; T::DataType = Float64)
     end
 end
 
-
 export CustomCelestialBody
 """
 Creates Custom CelestialBody Object from a name
@@ -232,19 +219,15 @@ Returns:
 function CustomCelestialBody(
     name::String,
     ephemeris::Function;
-    central_body::String = "",
-    naif_id::Int = -1,
-    μ::Number = 0.0,
-    Req::Number = 0.0,
+    central_body::String="",
+    naif_id::Int=-1,
+    μ::Number=0.0,
+    Req::Number=0.0,
 )
-
     print("Creating Custom Body: $name")
     return CelestialBody(name, central_body, naif_id, ephemeris, epoch, μ, Req)
 end
 
-
 function (body::CelestialBody)(t)
-
-    model.ephem(t)
-
+    return model.ephem(t)
 end

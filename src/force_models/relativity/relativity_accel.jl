@@ -6,19 +6,14 @@ struct RelativityModel <: AbstractNonPotentialBasedForce
 end
 
 function RelativityModel(central_body::Symbol)
-
     central_body = ThirdBodyModel(central_body)
     sun_body = ThirdBodyModel(:Sun)
 
     return RelativityModel(central_body, sun_body)
-
 end
 
 function acceleration(
-    relativity_model::RelativityModel,
-    u::AbstractArray,
-    p::ComponentVector,
-    t::Number,
+    relativity_model::RelativityModel, u::AbstractArray, p::ComponentVector, t::Number
 )
 
     #TODO: OFFER OPTION TO COMPUTE FROM EOP or SPICE EPHEMERIS 
@@ -35,9 +30,7 @@ function acceleration(
         p.c,
         J,
     )
-
 end
-
 
 """
 
@@ -51,10 +44,9 @@ function relativity_accel(
     v_sun::AbstractArray,
     c::Number,
     J::AbstractArray;
-    γ::Number = 1.0,
-    β::Number = 1.0,
+    γ::Number=1.0,
+    β::Number=1.0,
 )
-
     r = @view(u[1:3])
     ṙ = @view(u[4:6])
 
@@ -74,7 +66,4 @@ function relativity_accel(
         cross(cross(v_sun, (-μ_Sun / ((c^2.0) * (r_norm^3.0))) * r_sun), ṙ)
 
     return schwartzchild + lense_thirring + de_sitter
-
 end
-
-

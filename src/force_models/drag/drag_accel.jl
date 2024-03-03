@@ -23,12 +23,8 @@ struct DragAstroModel <: AbstractNonPotentialBasedForce
 end
 
 function acceleration(
-    drag_model::DragAstroModel,
-    u::AbstractArray,
-    p::ComponentVector,
-    t::Number,
+    drag_model::DragAstroModel, u::AbstractArray, p::ComponentVector, t::Number
 )
-
     rho = compute_density(p.JD, u, drag_model.eop_data, drag_model.atmosphere_model)
 
     #TODO: OFFER OPTION TO COMPUTE FROM EOP or SPICE EPHEMERIS 
@@ -37,7 +33,6 @@ function acceleration(
     BC = compute_ballistic_coefficient(drag_model.satellite_drag_model)
 
     return drag_accel(u, rho, BC, ω_vec, t)
-
 end
 
 """
@@ -57,13 +52,13 @@ The acceleration from drag is then computed with a cannonball model as
 
 !!! note
     Currently only Cannonball Drag is supported, to use a higher fidelity drag either use a state varying function or compute
-    the ballsitic coeffient further upstream
+    the ballistic coefficient further upstream
 
 # Arguments
 
 - `u::AbstractArray`: The current state of the spacecraft in the central body's inertial frame.
 - `rho::Number`: Atmospheric Density at (t, u) [kg/m^3].
-- `BC::Number`: The ballistic coeffient of the satellite -- (Area/mass) * Drag Coefficient [kg/m^2].
+- `BC::Number`: The ballistic coefficient of the satellite -- (Area/mass) * Drag Coefficient [kg/m^2].
 - `ω_vec::AbstractArray`: The angular velocity vector of Earth. Typically appozimated as [0.0; 0.0; ω_Earth]
 - `t::Number`: Current Time of the Simulation.
 
@@ -76,11 +71,7 @@ The acceleration from drag is then computed with a cannonball model as
 - `SVector{3}{Number}`: Inertial acceleration from Drag
 """
 @inline function drag_accel(
-    u::AbstractArray,
-    rho::Number,
-    BC::Number,
-    ω_vec::AbstractArray,
-    t::Number,
+    u::AbstractArray, rho::Number, BC::Number, ω_vec::AbstractArray, t::Number
 )
 
     # Compute Apparent Velocity w.r.t the Atmosphere using the Transport Theorem
@@ -88,5 +79,4 @@ The acceleration from drag is then computed with a cannonball model as
 
     # Scaled by 1E3 to convert to km/s
     return SVector{3}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3)
-
 end

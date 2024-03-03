@@ -3,13 +3,9 @@ struct ThirdBodyModel <: AbstractNonPotentialBasedForce
 end
 
 function ThirdBodyModel(name::Symbol)
-
     return ThirdBodyModel(CelestialBody(name))
-
 end
 
 function (model::ThirdBodyModel)(t::Number)
-
     return model.body(t)
-
 end
