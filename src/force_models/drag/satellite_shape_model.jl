@@ -69,7 +69,6 @@ where area is the 2D projection of a sphere
 
 """
 function CannonballFixedDrag(radius::Number, mass::Number, drag_coeff::Number)
-
     area = π * radius^2.0
 
     return CannonballFixedDrag(radius, mass, drag_coeff, drag_coeff * area / mass)
@@ -95,11 +94,8 @@ Returns the ballistic coeffient for a drag model given the model and current sta
 
 """
 @inline function ballistic_coefficient(
-    u::AbstractArray, 
-    p::ComponentVector, 
-    t::Number, 
-    model::CannonballFixedDrag)
-
+    u::AbstractArray, p::ComponentVector, t::Number, model::CannonballFixedDrag
+)
     return model.ballistic_coeff
 end
 
@@ -129,11 +125,7 @@ of the simulation.
     -`ballistic_coeff::Number`: The current ballistic coefficient of the spacecraft.
 """
 @inline function ballistic_coefficient(
-    u::AbstractArray, 
-    p::ComponentVector, 
-    t::Number, 
-    model::StateDragModel)
-
+    u::AbstractArray, p::ComponentVector, t::Number, model::StateDragModel
+)
     return u.BC
-
 end

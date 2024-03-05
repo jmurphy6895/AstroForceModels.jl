@@ -85,5 +85,3 @@ end
     # If None atmosphere provided return 0.0
     return 0.0
 end
-
-
