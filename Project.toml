@@ -5,6 +5,7 @@ version = "1.0.0-DEV"
 
 [deps]
 ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 SatelliteToolboxAtmosphericModels = "5718ef0a-a30f-426d-bcd9-4cf31dd12909"
 SatelliteToolboxCelestialBodies = "b0edd99f-a7ca-4aa6-9a1e-a53e8f506046"
