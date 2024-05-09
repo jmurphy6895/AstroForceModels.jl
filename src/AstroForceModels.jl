@@ -9,7 +9,6 @@ using SatelliteToolboxAtmosphericModels
 using SatelliteToolboxTransformations
 using SpaceIndices
 using ValSplit
-using AllocCheck
 
 abstract type AbstractAstroForceModel end
 
