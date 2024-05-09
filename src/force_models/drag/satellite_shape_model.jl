@@ -6,6 +6,8 @@
 #   Satellite Drag Models to easily compute the ballistic coefficient
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+export CannonballFixedDrag, StateDragModel
+export ballistic_coefficient
 
 """
 Abstract satellite drag model to help compute drag forces.
@@ -23,11 +25,11 @@ fixed ballistic coefficient.
 - `drag_coeff::Number`: The drag coefficient of the spacecraft.
 - `ballistic_coeff::Number`: The fixed ballistic coefficient to use.
 """
-struct CannonballFixedDrag <: AbstractSatelliteDragModel
+struct CannonballFixedDrag{T} <: AbstractSatelliteDragModel where {T}
     radius::Number
     mass::Number
     drag_coeff::Number
-    ballistic_coeff::Number
+    ballistic_coeff::T
 end
 
 """
@@ -43,6 +45,7 @@ Constructor for a fixed ballistic coefficient drag model.
 
 """
 function CannonballFixedDrag(ballistic_coeff::Number)
+    (ballistic_coeff < 0.0) && throw(ArgumentError("Ballistic coefficient should be ≥ 0"))
     return CannonballFixedDrag(1.0, 1.0, ballistic_coeff, ballistic_coeff)
 end
 
@@ -69,17 +72,21 @@ where area is the 2D projection of a sphere
 
 """
 function CannonballFixedDrag(radius::Number, mass::Number, drag_coeff::Number)
+    (drag_coeff < 0.0) && throw(ArgumentError("Drag coefficient should be ≥ 0"))
+    (radius < 0.0) && throw(ArgumentError("Radius should be ≥ 0"))
+    (mass < 0.0) && throw(ArgumentError("Mass should be ≥ 0"))
+
     area = π * radius^2.0
 
     return CannonballFixedDrag(radius, mass, drag_coeff, drag_coeff * area / mass)
 end
 
 """
-    ballistic__coefficient(
-        u::AbstractArray, 
-        p::ComponentVector, 
-        t::Number, 
-        model::CannonballFixedDrag)
+ballistic__coefficient(
+    u::AbstractArray, 
+    p::ComponentVector, 
+    t::Number, 
+    model::CannonballFixedDrag)
 
 Returns the ballistic coeffient for a drag model given the model and current state of the simulation.
 
@@ -94,7 +101,7 @@ Returns the ballistic coeffient for a drag model given the model and current sta
 
 """
 @inline function ballistic_coefficient(
-    u::AbstractArray, p::ComponentVector, t::Number, model::CannonballFixedDrag
+    u::AbstractArray, p::AbstractVector, t::Number, model::CannonballFixedDrag
 )
     return model.ballistic_coeff
 end
@@ -106,11 +113,11 @@ Empty struct used for when the simulation state includes the ballistic coefficie
 struct StateDragModel <: AbstractSatelliteDragModel end
 
 """
-    ballistic__coefficient(
-        u::AbstractArray, 
-        p::ComponentVector, 
-        t::Number, 
-        model::StateDragModel)
+ballistic__coefficient(
+    u::AbstractArray, 
+    p::ComponentVector, 
+    t::Number, 
+    model::StateDragModel)
 
 Returns the ballistic coeffient for a drag model given the model and current state 
 of the simulation.
@@ -125,7 +132,8 @@ of the simulation.
     -`ballistic_coeff::Number`: The current ballistic coefficient of the spacecraft.
 """
 @inline function ballistic_coefficient(
-    u::AbstractArray, p::ComponentVector, t::Number, model::StateDragModel
+    u::AbstractArray, p::AbstractVector, t::Number, model::StateDragModel
 )
-    return u.BC
+    #TODO: GENERALIZE THE INDEX, COMPONENT VECTOR?
+    return u[7]
 end
