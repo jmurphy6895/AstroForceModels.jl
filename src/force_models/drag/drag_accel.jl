@@ -25,10 +25,12 @@ Contains information to compute the acceleration of a drag force on a spacecraft
 - `atmosphere_model::Symbol`: The atmospheric model for computing the density.
 - `eop_data::EopIau1980`: Earth orientation parameters to help compute the density with the atmospheric model.
 """
-struct DragAstroModel <: AbstractNonPotentialBasedForce
-    satellite_drag_model::AbstractSatelliteDragModel
+struct DragAstroModel{T,V} <: AbstractNonPotentialBasedForce where {
+    T<:AbstractSatelliteDragModel,V<:Union{EopIau1980,EopIau2000A}
+}
+    satellite_drag_model::T
     atmosphere_model::Symbol
-    eop_data::EopIau1980
+    eop_data::V
 end
 
 """'
@@ -48,13 +50,15 @@ parameters of an object.
 
 """
 function acceleration(
-    drag_model::DragAstroModel, u::AbstractArray, p::ComponentVector, t::Number
+    u::AbstractArray, p::ComponentVector, t::Number, drag_model::DragAstroModel
 )
     # Compute density at the satellite's current position
-    rho = compute_density(p.JD, u, drag_model.eop_data, drag_model.atmosphere_model)
+    rho = compute_density(
+        p.JD + t / 86400.0, u, drag_model.eop_data, drag_model.atmosphere_model
+    )
 
     #TODO: OFFER OPTION TO COMPUTE FROM EOP or SPICE EPHEMERIS 
-    ω_vec = [0.0; 0.0; ω_Earth]
+    ω_vec = SVector{3}([0.0; 0.0; EARTH_ANGULAR_SPEED])
 
     # Compute the ballistic coefficient
     BC = ballistic_coefficient(u, p, t, drag_model.satellite_drag_model)
