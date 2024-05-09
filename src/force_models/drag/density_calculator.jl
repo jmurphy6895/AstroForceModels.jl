@@ -37,7 +37,7 @@ function compute_density end
 @inline function compute_density(
     JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:JB2008}
 )
-    # Compute the geodetic positon of the provided point
+    # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
     ecef_pos = R_J20002ITRF * @view(u[1:3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
@@ -50,7 +50,7 @@ end
 @inline function compute_density(
     JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:JR1971}
 )
-    # Compute the geodetic positon of the provided point
+    # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
     ecef_pos = R_J20002ITRF * @view(u[1:3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
@@ -63,7 +63,7 @@ end
 @inline function compute_density(
     JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:MSIS2000}
 )
-    # Compute the geodetic positon of the provided point
+    # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
     ecef_pos = R_J20002ITRF * @view(u[1:3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)

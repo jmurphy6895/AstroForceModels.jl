@@ -21,10 +21,10 @@
     drag_accel = acceleration(state, p, 0.0, drag_model)
 
     # Generated with Orekit Harris-Priester
-    expected_accleration = [
+    expected_acceleration = [
         -4.987575495487041e-06, 1.8197638453380163e-06, 6.678597193592705e-07
     ]
 
     # There is no common atmosphere between the two so we just test direction
-    @test dot(normalize(drag_accel), normalize(expected_accleration)) ≈ 1.0
+    @test dot(normalize(drag_accel), normalize(expected_acceleration)) ≈ 1.0
 end

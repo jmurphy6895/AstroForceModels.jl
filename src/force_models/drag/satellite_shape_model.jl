@@ -88,7 +88,7 @@ ballistic__coefficient(
     t::Number, 
     model::CannonballFixedDrag)
 
-Returns the ballistic coeffient for a drag model given the model and current state of the simulation.
+Returns the ballistic coefficient for a drag model given the model and current state of the simulation.
 
 # Arguments
     - `u::AbstractArray`: The current state of the simulation.
@@ -119,7 +119,7 @@ ballistic__coefficient(
     t::Number, 
     model::StateDragModel)
 
-Returns the ballistic coeffient for a drag model given the model and current state 
+Returns the ballistic coefficient for a drag model given the model and current state 
 of the simulation.
 
 # Arguments
