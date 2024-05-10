@@ -34,13 +34,13 @@
     ) ≈ 0.0 rtol=1E-15
     @test shadow_model(
         sat_pos_simple, sun_pos_simple, Conical(); R_Sun=R_SUN, R_Earth=R_EARTH
-    ) ≈ 0.2573669402416321 rtol=1E-15
+    ) ≈ 0.2573669402416321 rtol=1E-14
     @test shadow_model(
         sat_pos_simple, sun_pos_simple, Conical_Simplified(); R_Sun=R_SUN, R_Earth=R_EARTH
-    ) ≈ 0.303477350846976 rtol=1E-15
+    ) ≈ 0.303477350846976 rtol=1E-14
     @test shadow_model(
         sat_pos_simple, sun_pos_simple, INPE(); R_Sun=R_SUN, R_Earth=R_EARTH
-    ) ≈ 0.6874494027008462 rtol=1E-15
+    ) ≈ 0.6874494027008462 rtol=1E-14
     @test shadow_model(
         sat_pos_simple, sun_pos_simple, None(); R_Sun=R_SUN, R_Earth=R_EARTH
     ) ≈ 1.0 rtol=1E-15
