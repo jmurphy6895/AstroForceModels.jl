@@ -22,8 +22,8 @@
 
     # Generated with Orekit Harris-Priester
     expected_acceleration = [
-        -4.987575495487041e-06, 1.8197638453380163e-06, 6.678597193592705e-07
-    ]
+        -4.987575495487041e-09, 1.8197638453380163e-09, 6.678597193592705e-10
+    ] # km/s^2
 
     # There is no common atmosphere between the two so we just test direction
     @test dot(normalize(drag_accel), normalize(expected_acceleration)) ≈ 1.0

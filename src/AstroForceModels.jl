@@ -1,7 +1,9 @@
 module AstroForceModels
 
+using AngleBetweenVectors
 using ComponentArrays, StaticArraysCore
 using LinearAlgebra
+using Parameters
 using SatelliteToolboxBase
 using SatelliteToolboxCelestialBodies
 using SatelliteToolboxGravityModels
@@ -14,6 +16,8 @@ abstract type AbstractAstroForceModel end
 
 abstract type AbstractNonPotentialBasedForce <: AbstractAstroForceModel end
 abstract type AbstractPotentialBasedForce <: AbstractAstroForceModel end
+
+include("./constants.jl")
 
 include("./force_models/drag/satellite_shape_model.jl")
 include("./force_models/drag/density_calculator.jl")
