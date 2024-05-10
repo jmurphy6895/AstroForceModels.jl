@@ -82,7 +82,7 @@ function CannonballFixedDrag(radius::Number, mass::Number, drag_coeff::Number)
 end
 
 """
-ballistic__coefficient(
+ballistic_coefficient(
     u::AbstractArray, 
     p::ComponentVector, 
     t::Number, 
@@ -113,7 +113,7 @@ Empty struct used for when the simulation state includes the ballistic coefficie
 struct StateDragModel <: AbstractSatelliteDragModel end
 
 """
-ballistic__coefficient(
+ballistic_coefficient(
     u::AbstractArray, 
     p::ComponentVector, 
     t::Number, 

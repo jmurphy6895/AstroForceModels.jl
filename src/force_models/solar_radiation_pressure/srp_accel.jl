@@ -16,21 +16,55 @@
 
 export SRPAstroModel, srp_accel
 
-struct SRPAstroModel <: AbstractNonPotentialBasedForce
-    satellite_srp_model::AbstractSatelliteSRPModel
-    sun_data::ThirdBodyModel
+"""
+SRP Astro Model struct
+Contains information to compute the acceleration of a SRP a spacecraft.
+
+# Fields
+- `satellite_srp_model::AbstractSatelliteDragModel`: The satellite srp model for computing the ballistic coefficient.
+- `sun_data::ThirdBodyModel`: The data to compute the Sun's position.
+"""
+@with_kw struct SRPAstroModel{T,V,W} <: AbstractNonPotentialBasedForce where {
+    T<:AbstractSatelliteSRPModel,V<:ThirdBodyModel,W<:Union{EopIau1980,EopIau2000A}
+}
+    satellite_srp_model::T
+    sun_data::V
+    eop_data::W
+    shadow_model::Symbol = Conical()
 end
 
+"""'
+    acceleration(drag_model::DragAstroModel, u::AbstractArray, p::ComponentVector, t::Number)
+
+Computes the drag acceleration acting on a spacecraft given a drag model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `p::ComponentVector`: Current parameters of the simulation.
+- `t::Number`: Current time of the simulation.
+- `srp_model::DragAstroModel`: Drag model struct containing the relevant information to compute the acceleration.
+
+# Returns
+- `acceleration: SVector{3}`: The 3-dimensional srp acceleration acting on the spacecraft.
+
+"""
 function acceleration(
-    srp_model::SRPAstroModel, u::AbstractArray, p::ComponentVector, t::Number
+    u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel
 )
-    R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), JD, eop_data)
+    # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
+    R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), p.JD, srp_model.eop_data)
 
-    sun_pos = R_MOD2J2000 * sun_position_i(JD) ./ 1E3
+    # Compute the sun's position in the J2000 frame
+    # TODO: REPLACE WITH SPICE/SPICE-LIKE EPHEMERIS
+    # TODO: SUPPLY OPTIONS FROM SRP MODEL
+    sun_pos = R_MOD2J2000 * sun_position_mod(p.JD)
 
-    RC = compute_reflectivity_coefficient(srp_model.satellite_drag_model)
+    # Compute the reflectivity ballistic coefficient
+    RC = reflectivity_ballistic_coefficient(u, p, t, srp_model.satellite_srp_model)
 
-    return srp_accel(u, sun_pos, p.R_Sun, p.R_Earth, p.ψ, RC, t)
+    # Return the 3-Dimensional SRP Force
+    return srp_accel(u, sun_pos, RC; ShadowModel=srp_model.shadow_model)
 end
 
 """
@@ -67,21 +101,19 @@ force can be computed using the a Cannonball model with the following equation
 
 - `SVector{3}{Number}`: Inertial acceleration from the 3rd body
 """
-
 function srp_accel(
     u::AbstractArray,
     sun_pos::AbstractArray,
-    R_Sun::Number,
-    R_Earth::Number,
-    Ψ::Number,
-    RC::Number,
-    t::Number;
-    ShadowModel::Symbol=:Conical,
+    RC::Number;
+    ShadowModel::Symbol=Conical(),
+    R_Sun::Number=R_SUN,
+    R_Earth::Number=R_EARTH,
+    Ψ::Number=SOLAR_FLUX,
 )
     sat_pos = @view(u[1:3])
 
     # Compute the lighting factor
-    F = shadow_model(sat_pos, sun_pos, R_Sun, R_Earth, t, ShadowModel)
+    F = shadow_model(sat_pos, sun_pos, ShadowModel; R_Sun=R_Sun, R_Earth=R_Earth)
 
     # Compute the Vector Between the Satellite and Sun
     R_spacecraft_Sun = sat_pos - sun_pos
