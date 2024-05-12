@@ -13,13 +13,28 @@
 #   [1] https://docs.tudat.space/en/stable/_src_user_guide/state_propagation/propagation_setup/acceleration_models/third_body_acceleration.html
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+"""
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, third_body_model::ThirdBodyModel)
 
+Computes the drag acceleration acting on a spacecraft given a drag model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `p::ComponentVector`: Current parameters of the simulation.
+- `t::Number`: Current time of the simulation.
+- `third_body_model::ThirdBodyModel`: Third body model struct containing the relevant information to compute the acceleration.
+
+# Returns
+- `acceleration: SVector{3}`: The 3-dimensional srp acceleration acting on the spacecraft.
+
+"""
 function acceleration(
-    third_body_model::ThirdBodyModel, u::AbstractArray, p::ComponentVector, t::Number
+    u::AbstractArray, p::ComponentVector, t::Number, third_body_model::ThirdBodyModel
 )
-    body_pos = third_body_model(t)
+    body_pos = third_body_model(p.JD + t/86400.0)
 
-    return third_body_accel(u, third_body_model.μ, body_pos)
+    return third_body_accel(u, third_body_model.body.μ, body_pos)
 end
 
 export third_body_accel

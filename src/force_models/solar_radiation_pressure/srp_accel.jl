@@ -33,8 +33,8 @@ Contains information to compute the acceleration of a SRP a spacecraft.
     shadow_model::Symbol = Conical()
 end
 
-"""'
-    acceleration(drag_model::DragAstroModel, u::AbstractArray, p::ComponentVector, t::Number)
+"""
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel)
 
 Computes the drag acceleration acting on a spacecraft given a drag model and current state and 
 parameters of an object.
@@ -43,7 +43,7 @@ parameters of an object.
 - `u::AbstractArray`: Current State of the simulation.
 - `p::ComponentVector`: Current parameters of the simulation.
 - `t::Number`: Current time of the simulation.
-- `srp_model::DragAstroModel`: Drag model struct containing the relevant information to compute the acceleration.
+- `srp_model::SRPAstroModel`: SRP model struct containing the relevant information to compute the acceleration.
 
 # Returns
 - `acceleration: SVector{3}`: The 3-dimensional srp acceleration acting on the spacecraft.
@@ -52,13 +52,8 @@ parameters of an object.
 function acceleration(
     u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel
 )
-    # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
-    R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), p.JD, srp_model.eop_data)
-
-    # Compute the sun's position in the J2000 frame
-    # TODO: REPLACE WITH SPICE/SPICE-LIKE EPHEMERIS
-    # TODO: SUPPLY OPTIONS FROM SRP MODEL
-    sun_pos = R_MOD2J2000 * sun_position_mod(p.JD)
+    # Compute the Sun's Position
+    sun_pos = srp_model.sun_data(p.JD + t/86400.0)
 
     # Compute the reflectivity ballistic coefficient
     RC = reflectivity_ballistic_coefficient(u, p, t, srp_model.satellite_srp_model)
