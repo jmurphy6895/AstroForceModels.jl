@@ -32,7 +32,7 @@ parameters of an object.
 function acceleration(
     u::AbstractArray, p::ComponentVector, t::Number, third_body_model::ThirdBodyModel
 )
-    body_pos = third_body_model(p.JD + t/86400.0)
+    body_pos = third_body_model(p.JD + t / 86400.0) ./ 1E3
 
     return third_body_accel(u, third_body_model.body.μ, body_pos)
 end

@@ -18,7 +18,9 @@ Contains information to compute the acceleration of a third body force acting on
 - `body::CelestialBody`: Celestial body acting on the craft.
 - `ephem_type::Symbol`: Ephemeris type used to compute body's position. Options are currently :Vallado.
 """
-@with_kw struct ThirdBodyModel{T} <: AbstractNonPotentialBasedForce where{T<:Union{EopIau1980,EopIau2000A,Nothing}}
+@with_kw struct ThirdBodyModel{T} <: AbstractNonPotentialBasedForce where {
+    T<:Union{EopIau1980,EopIau2000A,Nothing}
+}
     body::CelestialBody
     eop_data::T = nothing
     ephem_type::Symbol = Vallado()
@@ -36,27 +38,29 @@ Computes the position of the celestial body using Vallado's ephemeris
 # Returns
 - `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
 """
-function get_position(ephem_type::Val{:Vallado}, body::CelestialBody, eop_data::T, time::Number) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
-
+function get_position(
+    ephem_type::Val{:Vallado}, body::CelestialBody, eop_data::T, time::Number
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
     if body.name == :Sun
         pos_mod = sun_position_mod(time)
     elseif body.name == :Moon
         pos_mod = moon_position_mod(time)
     else
-        throw(ArgumentError("Vallado ephemeris is only supported by Sun and Moon Currently"))
+        throw(
+            ArgumentError("Vallado ephemeris is only supported by Sun and Moon Currently")
+        )
     end
 
     # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
     R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), time, eop_data)
 
     return R_MOD2J2000 * pos_mod
-
 end
 
-@valsplit 1 function get_position(ephem_type::Symbol, body::CelestialBody, eop_data::T, time::Number) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
-
+@valsplit 1 function get_position(
+    ephem_type::Symbol, body::CelestialBody, eop_data::T, time::Number
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
     throw(ArgumentError("$ephem_type is not supported. Current options are :Vallado"))
-
 end
 
 """

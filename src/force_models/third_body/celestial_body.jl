@@ -32,8 +32,8 @@ function CelestialBody(name::Val{:Sun}; T::DataType=Float64)
         1,                              # NAIF ID Code
         T(1.32712440018E11),            # μ [km/s]
         T(6.955E5),                     # Equatorial Radius [km]
-    )    
-end                       
+    )
+end
 
 function CelestialBody(name::Val{:Moon}; T::DataType=Float64)
     return CelestialBody{T}(
@@ -42,14 +42,14 @@ function CelestialBody(name::Val{:Moon}; T::DataType=Float64)
         301,                            # NAIF ID Code
         T(4.90486959E3),                # μ [km/s]
         T(1738.1),                      # Equatorial Radius [km]
-    )                        
+    )
 end
 
 @valsplit 1 function CelestialBody(name::Symbol; T::DataType=Float64)
     throw(
         ArgumentError(
-            "Celestial body $name not recognized or not yet supported. Consider creating custom CelestialBody instead."
-        )
+            "Celestial body $name not recognized or not yet supported. Consider creating custom CelestialBody instead.",
+        ),
     )
 end
 

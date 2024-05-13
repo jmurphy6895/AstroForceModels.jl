@@ -53,7 +53,7 @@ function acceleration(
     u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel
 )
     # Compute the Sun's Position
-    sun_pos = srp_model.sun_data(p.JD + t/86400.0)
+    sun_pos = srp_model.sun_data(p.JD + t / 86400.0)
 
     # Compute the reflectivity ballistic coefficient
     RC = reflectivity_ballistic_coefficient(u, p, t, srp_model.satellite_srp_model)
