@@ -34,7 +34,7 @@ struct DragAstroModel{T,V} <: AbstractNonPotentialBasedForce where {
 end
 
 """'
-    acceleration(drag_model::DragAstroModel, u::AbstractArray, p::ComponentVector, t::Number)
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, drag_model::DragAstroModel)
 
 Computes the drag acceleration acting on a spacecraft given a drag model and current state and 
 parameters of an object.

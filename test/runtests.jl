@@ -17,4 +17,14 @@ using Test
     include("solar_radiation_pressure/test_satellite_shape_models.jl")
     include("solar_radiation_pressure/test_shadow_models.jl")
     include("solar_radiation_pressure/test_srp_accel.jl")
+
+    # Third Body Tests
+    include("third_body/test_celestial_body.jl")
+    include("third_body/test_third_body_model.jl")
+    include("third_body/test_third_body_accel.jl")
+
+    # Zonal Harmonics Tests
+
+    # Relativity Tests
+
 end
