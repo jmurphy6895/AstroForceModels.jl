@@ -16,7 +16,7 @@
     satellite_srp_model = CannonballFixedSRP(0.2)
 
     #TODO: RESOLVE SUN'S POSITION WITH HIGHER FIDELITY MODEL
-    sun_model = nothing
+    sun_model = ThirdBodyModel(body=SunBody(), eop_data=eop_data)
 
     srp_model = SRPAstroModel(satellite_srp_model, sun_model, eop_data, Conical())
 

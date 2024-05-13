@@ -1,10 +1,8 @@
 #TODO: THIS PROBABLY BELONGS IN SATELLITE TOOLKIT CELESTIAL BODY
 struct CelestialBody{T<:Number}
-    name::String
-    central_body::String
+    name::Symbol
+    central_body::Symbol
     jpl_code::Int
-    ephemeris::Function
-
     μ::T
     Req::T
 end
@@ -32,8 +30,8 @@ function CelestialBody(name::Val{:Sun}; T::DataType=Float64)
         :Sun,                           # Name
         :None,                          # Central Body
         1,                              # NAIF ID Code
-        1.32712440018E11,               # μ [km/s]
-        6.955E5,                        # Equatorial Radius [km]
+        T(1.32712440018E11),            # μ [km/s]
+        T(6.955E5),                     # Equatorial Radius [km]
     )    
 end                       
 
@@ -42,8 +40,8 @@ function CelestialBody(name::Val{:Moon}; T::DataType=Float64)
         :Moon,                          # Name
         :Earth,                         # Central Body
         301,                            # NAIF ID Code
-        4.90486959E3,                   # μ [km/s]
-        1738.1,                         # Equatorial Radius [km]
+        T(4.90486959E3),                # μ [km/s]
+        T(1738.1),                      # Equatorial Radius [km]
     )                        
 end
 
@@ -55,6 +53,6 @@ end
     )
 end
 
-export Sun, Moon
-Sun(; T::DataType=Float64) = CelestialBody(:Sun; T=T)
-Moon(; T::DataType=Float64) = CelestialBody(:Moon; T=T)
+export SunBody, MoonBody
+SunBody(; T::DataType=Float64) = CelestialBody(:Sun; T=T)
+MoonBody(; T::DataType=Float64) = CelestialBody(:Moon; T=T)
