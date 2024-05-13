@@ -64,7 +64,7 @@ end
 end
 
 """
-Convience to compute the ephemeris postion of a CelestialBody in a ThirdBodyModel
+Convenience to compute the ephemeris position of a CelestialBody in a ThirdBodyModel
 Wraps get_position().
 
 # Arguments
