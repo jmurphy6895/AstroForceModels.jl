@@ -36,7 +36,7 @@ end
 """
     acceleration(u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel)
 
-Computes the drag acceleration acting on a spacecraft given a drag model and current state and 
+Computes the srp acceleration acting on a spacecraft given a srp model and current state and 
 parameters of an object.
 
 # Arguments

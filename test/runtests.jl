@@ -3,6 +3,7 @@ using ComponentArrays
 using LinearAlgebra
 using SatelliteToolboxAtmosphericModels
 using SatelliteToolboxCelestialBodies
+using SatelliteToolboxGravityModels
 using SatelliteToolboxTransformations
 using SpaceIndices
 using Test
@@ -24,6 +25,7 @@ using Test
     include("third_body/test_third_body_accel.jl")
 
     # Zonal Harmonics Tests
+    include("gravity/test_grav_accel.jl")
 
     # Relativity Tests
 
