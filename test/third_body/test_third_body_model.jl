@@ -10,6 +10,12 @@
 
     @test expected_sun_pos ≈ sun_pos rtol = 1E-4
 
+    sun_vel = sun_third_body(JD; return_type=:velocity)
+
+    expected_sun_vel = [29356.8910247322, 6844.1181149359, 2965.5158876916]
+
+    @test expected_sun_vel ≈ sun_vel rtol = 1E-2
+
     moon_third_body = ThirdBodyModel(; body=MoonBody(), eop_data=eop_data)
 
     moon_pos = moon_third_body(JD)

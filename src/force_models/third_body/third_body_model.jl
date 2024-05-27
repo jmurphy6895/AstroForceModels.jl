@@ -64,6 +64,38 @@ end
 end
 
 """
+Computes the velocity of the celestial body using Vallado's ephemeris
+
+# Arguments
+- `ephem_type::Symbol`: Ephemeris type used to compute body's position.
+- `body::CelestialBody`: Celestial body acting on the craft.
+- `time::Number`: Current time of the simulation in seconds.
+
+# Returns
+- `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
+"""
+function get_velocity(
+    ephem_type::Val{:Vallado}, body::CelestialBody, eop_data::T, time::Number
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
+    if body.name == :Sun
+        pos_mod = sun_velocity_mod(time)
+    else
+        throw(
+            ArgumentError("Vallado velocity ephemeris is only supported by Sun Currently")
+        )
+    end
+
+    return pos_mod
+end
+
+@valsplit 1 function get_velocity(
+    ephem_type::Symbol, body::CelestialBody, eop_data::T, time::Number
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
+    throw(ArgumentError("$ephem_type is not supported. Current options are :Vallado"))
+end
+
+#TODO: ADD FULL STATE WITH SPICE SUPPORT
+"""
 Convenience to compute the ephemeris position of a CelestialBody in a ThirdBodyModel
 Wraps get_position().
 
@@ -74,6 +106,16 @@ Wraps get_position().
 - `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
 
 """
-function (model::ThirdBodyModel)(t::Number)
-    return get_position(model.ephem_type, model.body, model.eop_data, t)
+function (model::ThirdBodyModel)(t::Number; return_type::Symbol=:position)
+    if return_type == :position
+        return get_position(model.ephem_type, model.body, model.eop_data, t)
+    elseif return_type == :velocity
+        return get_velocity(model.ephem_type, model.body, model.eop_data, t)
+    else
+        throw(
+            ArgumentError(
+                "Return type $return_type not recognized. Supported options are :position, :velocity, and :full_state",
+            ),
+        )
+    end
 end

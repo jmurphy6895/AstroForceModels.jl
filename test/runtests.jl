@@ -28,5 +28,5 @@ using Test
     include("gravity/test_grav_accel.jl")
 
     # Relativity Tests
-
+    include("relativity/test_relativity.jl")
 end
