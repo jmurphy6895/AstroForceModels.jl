@@ -1,4 +1,18 @@
-# https://link.springer.com/article/10.1007/s10569-021-10014-y
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Description
+# ==========================================================================================
+#
+#   Relativitiy Force Models for Schwartzchild, Lense-Thirring, and De Sitter Effects
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# References
+# ==========================================================================================
+#   [1] https://link.springer.com/article/10.1007/s10569-021-10014-y
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 export RelativityModel,
     relativity_accel,
     lense_thirring_accleration,
@@ -12,12 +26,13 @@ Contains information to compute the acceleration of relativity acting on a space
 # Fields
 - `central_body::ThirdBodyModel`: The data to compute the central body's graviational parameter.
 - `sun_body::ThirdBodyModel`: The data to compute the Sun's position, velocity, and graviational parameter.
+- `eop_data::Union{EopIau1980,EopIau2000A}`: Earth Orientation Parameter data.
 - `c::Number`: The speed of light [km/s].
-- `γ::Number`: 
-- `β::Number`:
-- `schwartzchild::Bool`: Include the Schwartzchild relativity effect.
-- `lense_thirring::Bool`: Include the Lense Thirring relativity effect.
-- `de_Sitter::Bool`: Include the de Sitter relativity effect.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+- `schwartzchild_effect::Bool`: Include the Schwartzchild relativity effect.
+- `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
+- `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
 """
 @with_kw struct RelativityModel <: AbstractNonPotentialBasedForce
     central_body::ThirdBodyModel = ThirdBodyModel(;
@@ -34,7 +49,7 @@ Contains information to compute the acceleration of relativity acting on a space
 end
 
 """
-    acceleration(u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel)
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, relativity_model::RelativityModel)
 
 Computes the srp acceleration acting on a spacecraft given a srp model and current state and 
 parameters of an object.
@@ -43,10 +58,10 @@ parameters of an object.
 - `u::AbstractArray`: Current State of the simulation.
 - `p::ComponentVector`: Current parameters of the simulation.
 - `t::Number`: Current time of the simulation.
-- `srp_model::SRPAstroModel`: SRP model struct containing the relevant information to compute the acceleration.
+- `relativity_model::RelativityModel`: Relativity model struct containing the relevant information to compute the acceleration.
 
 # Returns
-- `acceleration: SVector{3}`: The 3-dimensional srp acceleration acting on the spacecraft.
+- `acceleration: SVector{3}`: The 3-dimensional relativity acceleration acting on the spacecraft.
 
 """
 function acceleration(
@@ -80,7 +95,40 @@ function acceleration(
 end
 
 """
+    relativity_accel(
+        u::AbstractArray,
+        r_sun::AbstractArray,
+        v_sun::AbstractArray,
+        μ_body::Number,
+        μ_Sun::Number,
+        J::AbstractArray;
+        c::Number=SPEED_OF_LIGHT / 1E3,
+        γ::Number=1.0,
+        β::Number=1.0,
+        schwartzchild_effect::Bool=true,
+        lense_thirring_effect::Bool=true,
+        de_Sitter_effect::Bool=true,
+    )
 
+Computes the relativity acceleration acting on a spacecraft given a relativity model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `r_sun::AbstractArray`: The position of the sun in the Earth inertial frame.
+- `v_sun::AbstractArray`: The velocity of the sun in the Earth inertial frame.
+- `μ_body::Number`: Gravitation Parameter of the central body.
+- `μ_Sun::Number`: Gravitation Parameter of the Sun. [km^3/s^2]
+- `J::AbstractArray`: Angular momentum vector per unit mass of the central body. [km^3/s^2]
+- `c::Number`: Speed of Light [km/s]
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+- `schwartzchild_effect::Bool`: Include the Schwartzchild relativity effect.
+- `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
+- `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
+
+# Returns
+- `acceleration: SVector{3}`: The 3-dimensional relativity acceleration acting on the spacecraft.
 
 """
 function relativity_accel(
@@ -105,7 +153,22 @@ function relativity_accel(
 end
 
 """
+    schwartzchild_acceleration(
+        u::AbstractArray, μ_body::Number; c::Number=SPEED_OF_LIGHT, γ::Number=1.0, β::Number=1.0
+    )
 
+Computes the relativity acceleration acting on a spacecraft given a relativity model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `μ_body::Number`: Gravitation Parameter of the central body.
+- `c::Number`: Speed of Light [km/s]
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+
+# Returns
+- `schwartzchild_acceleration: SVector{3}`: The 3-dimensional schwartzchild acceleration acting on the spacecraft.
 
 """
 function schwartzchild_acceleration(
@@ -126,7 +189,26 @@ function schwartzchild_acceleration(
 end
 
 """
+    lense_thirring_acceleration(
+        u::AbstractArray,
+        μ_body::Number,
+        J::AbstractArray;
+        c::Number=SPEED_OF_LIGHT,
+        γ::Number=1.0,
+    )
 
+Computes the lense thirring relativity acceleration acting on a spacecraft given a relativity model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `μ_body::Number`: Gravitation Parameter of the central body.
+- `J::AbstractArray`: Angular momentum vector per unit mass of the central body. [km^3/s^2]
+- `c::Number`: Speed of Light [km/s]
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+
+# Returns
+- `lense_thirring_acceleration: SVector{3}`: The 3-dimensional lense thirring acceleration acting on the spacecraft.
 
 """
 function lense_thirring_acceleration(
@@ -150,7 +232,28 @@ function lense_thirring_acceleration(
 end
 
 """
+    de_Sitter_acceleration(
+        u::AbstractArray,
+        r_sun::AbstractArray,
+        v_sun::AbstractArray,
+        μ_Sun::Number;
+        c::Number=SPEED_OF_LIGHT,
+        γ::Number=1.0,
+    )
 
+Computes the relativity acceleration acting on a spacecraft given a relativity model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `r_sun::AbstractArray`: The position of the sun in the Earth inertial frame.
+- `v_sun::AbstractArray`: The velocity of the sun in the Earth inertial frame.
+- `μ_Sun::Number`: Gravitation Parameter of the Sun. [km^3/s^2]
+- `c::Number`: Speed of Light [km/s]
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+
+# Returns
+- `de_Sitter_acceleration: SVector{3}`: The 3-dimensional de Sitter acceleration acting on the spacecraft.
 
 """
 function de_Sitter_acceleration(
