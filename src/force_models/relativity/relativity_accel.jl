@@ -15,7 +15,7 @@
 
 export RelativityModel,
     relativity_accel,
-    lense_thirring_accleration,
+    lense_thirring_acceleration,
     schwartzchild_acceleration,
     de_Sitter_acceleration
 #TODO: CAN THIS BE INCORPORATED INTO THE POTENTIAL FORCES IN DROMO
@@ -28,8 +28,8 @@ Contains information to compute the acceleration of relativity acting on a space
 - `sun_body::ThirdBodyModel`: The data to compute the Sun's position, velocity, and graviational parameter.
 - `eop_data::Union{EopIau1980,EopIau2000A}`: Earth Orientation Parameter data.
 - `c::Number`: The speed of light [km/s].
-- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
-- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Relativity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Relativity.
 - `schwartzchild_effect::Bool`: Include the Schwartzchild relativity effect.
 - `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
 - `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
@@ -121,8 +121,8 @@ parameters of an object.
 - `μ_Sun::Number`: Gravitation Parameter of the Sun. [km^3/s^2]
 - `J::AbstractArray`: Angular momentum vector per unit mass of the central body. [km^3/s^2]
 - `c::Number`: Speed of Light [km/s]
-- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
-- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Relativity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Relativity.
 - `schwartzchild_effect::Bool`: Include the Schwartzchild relativity effect.
 - `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
 - `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
@@ -164,8 +164,8 @@ parameters of an object.
 - `u::AbstractArray`: Current State of the simulation.
 - `μ_body::Number`: Gravitation Parameter of the central body.
 - `c::Number`: Speed of Light [km/s]
-- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
-- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Realtivity.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Relativity.
+- `β::Number`: Post-Newtonian Parameterization parameter. β=1 in General Relativity.
 
 # Returns
 - `schwartzchild_acceleration: SVector{3}`: The 3-dimensional schwartzchild acceleration acting on the spacecraft.
@@ -205,7 +205,7 @@ parameters of an object.
 - `μ_body::Number`: Gravitation Parameter of the central body.
 - `J::AbstractArray`: Angular momentum vector per unit mass of the central body. [km^3/s^2]
 - `c::Number`: Speed of Light [km/s]
-- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Relativity.
 
 # Returns
 - `lense_thirring_acceleration: SVector{3}`: The 3-dimensional lense thirring acceleration acting on the spacecraft.
@@ -250,7 +250,7 @@ parameters of an object.
 - `v_sun::AbstractArray`: The velocity of the sun in the Earth inertial frame.
 - `μ_Sun::Number`: Gravitation Parameter of the Sun. [km^3/s^2]
 - `c::Number`: Speed of Light [km/s]
-- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Realtivity.
+- `γ::Number`: Post-Newtonian Parameterization parameter. γ=1 in General Relativity.
 
 # Returns
 - `de_Sitter_acceleration: SVector{3}`: The 3-dimensional de Sitter acceleration acting on the spacecraft.
