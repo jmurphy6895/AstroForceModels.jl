@@ -3,7 +3,7 @@
 # Description
 # ==========================================================================================
 #
-#   Relativitiy Force Models for Schwartzchild, Lense-Thirring, and De Sitter Effects
+#   Relativity Force Models for Schwartzchild, Lense-Thirring, and De Sitter Effects
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
