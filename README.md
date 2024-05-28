@@ -26,9 +26,7 @@ julia> Pkg.add("AstroForceModels")
 
 ## Documentation
 
-For more information, see the [documentation][docs-stable-url].
-
-[comment]: <>  UPDATE WITH OUR DOCS
+For more information, see the [documentation][docs-dev-url].
 
 [docs-dev-url]: https://jmurphy6895.github.io/AstroForceModels.jl/stable/
 [docs-stable-url]: https://jmurphy6895.github.io/AstroForceModels.jl/stable/
