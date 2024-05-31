@@ -1,7 +1,7 @@
 name = "AstroForceModels"
 uuid = "077569d7-e100-45f3-83e3-c646e23345bd"
 authors = ["Jordan Murphy <jmurphy6895@gmail.com> and contributors"]
-version = "1.0.0-DEV"
+version = "0.1.0"
 
 [deps]
 AngleBetweenVectors = "ec570357-d46e-52ed-9726-18773498274d"
