@@ -19,6 +19,7 @@ ValSplit = "0625e100-946b-11ec-09cd-6328dd093154"
 
 [compat]
 AngleBetweenVectors = "0.3"
+Aqua = "0.8"
 ComponentArrays = "0.15"
 Parameters = "0.12"
 SatelliteToolboxAtmosphericModels = "0.1"
@@ -33,6 +34,7 @@ julia = "1.9"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 
 [targets]
-test = ["Test"]
+test = ["Aqua", "Test"]
