@@ -17,6 +17,8 @@ This package contains the dominant astrodynamics forces affecting the orbital tr
 - [ ] Albedo
 - [ ] Solid Tides
 
+This first implementation is just to get a set of working models, the next steps are to get everything allocation-free and working with automatic differentiation. Furthermore, the plan is likely to merge this effort into Julia Space Mission Design's AstroModels -- https://github.com/JuliaSpaceMissionDesign/AstroModels.jl. But plans are still under disccusion there.
+
 ## Installation
 
 ```julia
