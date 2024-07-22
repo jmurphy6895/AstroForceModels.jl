@@ -33,5 +33,5 @@ using Test
 end
 
 @testset "Aqua.jl" begin
-    Aqua.test_all(AstroForceModels;ambiguities=(recursive=false))
+    Aqua.test_all(AstroForceModels; ambiguities=(recursive = false))
 end
