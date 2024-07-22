@@ -1,3 +1,4 @@
+using Aqua
 using AstroForceModels
 using ComponentArrays
 using LinearAlgebra
@@ -29,4 +30,8 @@ using Test
 
     # Relativity Tests
     include("relativity/test_relativity.jl")
+end
+
+@testset "Aqua.jl" begin
+    Aqua.test_all(AstroForceModels; ambiguities=(recursive = false))
 end
