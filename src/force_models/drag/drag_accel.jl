@@ -29,7 +29,7 @@ struct DragAstroModel{T,V} <: AbstractNonPotentialBasedForce where {
     T<:AbstractSatelliteDragModel,V<:Union{EopIau1980,EopIau2000A}
 }
     satellite_drag_model::T
-    atmosphere_model::Symbol
+    atmosphere_model::AtmosphericModelType
     eop_data::V
 end
 

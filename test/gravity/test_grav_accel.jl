@@ -1,4 +1,4 @@
-@testset "Test Gravitational Acceleration" begin
+@testset "Gravitational Acceleration" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
 

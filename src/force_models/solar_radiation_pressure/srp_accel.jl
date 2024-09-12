@@ -30,7 +30,7 @@ Contains information to compute the acceleration of a SRP a spacecraft.
     satellite_srp_model::T
     sun_data::V
     eop_data::W
-    shadow_model::Symbol = Conical()
+    shadow_model::ShadowModelType = Conical()
 end
 
 """
@@ -53,7 +53,7 @@ function acceleration(
     u::AbstractArray, p::ComponentVector, t::Number, srp_model::SRPAstroModel
 )
     # Compute the Sun's Position
-    sun_pos = srp_model.sun_data(p.JD + t / 86400.0)
+    sun_pos = srp_model.sun_data(p.JD + t / 86400.0, Position())
 
     # Compute the reflectivity ballistic coefficient
     RC = reflectivity_ballistic_coefficient(u, p, t, srp_model.satellite_srp_model)
@@ -63,7 +63,7 @@ function acceleration(
 end
 
 """
-    srp_accel(u::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, Ψ::Number, RC::Number, t::Number, [SRPModel::Symbol]; ShadowModel::Symbol)
+    srp_accel(u::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, Ψ::Number, RC::Number, t::Number; ShadowModel::ShadowModelType)
 
 Compute the Acceleration from Solar Radiaiton Pressure
 
@@ -89,8 +89,7 @@ force can be computed using the a Cannonball model with the following equation
 
 # Optional Arguments
 
-- `SRPModel::Symbol`: SRP Model to use. Current Options -- :Cannonball, :None
-- `ShadowModel::Symbol`: SRP Earth Shadow Model to use. Current Options -- :Conical, :Conical_Simplified, :Cylinderical
+- `ShadowModel::ShadowModelType`: SRP Earth Shadow Model to use. Current Options -- :Conical, :Conical_Simplified, :Cylinderical
 
 # Returns
 
@@ -100,7 +99,7 @@ function srp_accel(
     u::AbstractArray,
     sun_pos::AbstractArray,
     RC::Number;
-    ShadowModel::Symbol=Conical(),
+    ShadowModel::ShadowModelType=Conical(),
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
     Ψ::Number=SOLAR_FLUX,

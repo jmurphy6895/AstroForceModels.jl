@@ -10,7 +10,6 @@ using SatelliteToolboxGravityModels
 using SatelliteToolboxAtmosphericModels
 using SatelliteToolboxTransformations
 using SpaceIndices
-using ValSplit
 
 abstract type AbstractAstroForceModel end
 

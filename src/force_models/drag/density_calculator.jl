@@ -8,15 +8,16 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 export JB2008, JR1971, MSIS2000, ExpAtmo, None
-JB2008() = :JB2008
-JR1971() = :JR1971
-MSIS2000() = :MSIS2000
-ExpAtmo() = :ExpAtmo
-None() = :None
+abstract type AtmosphericModelType end
+struct JB2008 <: AtmosphericModelType end
+struct JR1971 <: AtmosphericModelType end
+struct MSIS2000 <: AtmosphericModelType end
+struct ExpAtmo <: AtmosphericModelType end
+struct None <: AtmosphericModelType end
 
 export compute_density
 """
-    compute_density(JD::Number, u::AbstractArray, eop_data::EopIau1980, Val(AtmosphereType::Symbol))
+    compute_density(JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::AtmosphericModelType)
 
 Computes the atmospheric density at a point given the date, position, eop_data, and atmosphere type
 
@@ -24,9 +25,9 @@ Computes the atmospheric density at a point given the date, position, eop_data, 
 - `JD::Number`: The current time of the simulation in Julian days.
 - `u::AbstractArray`: The current state of the simulation.
 - `eop_data::EopIau1980`: The earth orientation parameters.
-- `AtmosphereType::Symbol`: The type of atmospheric model used to compute the density. Available 
-    options are Jacchia-Bowman 2008 (:JB2008), Jacchia-Roberts 1971 (:JR1971), NRL MSIS 2000 (:MSIS2000),
-    Exponential (:ExpAtmo), and None (:None)
+- `AtmosphereType::AtmosphericModelType`: The type of atmospheric model used to compute the density. Available 
+    options are Jacchia-Bowman 2008 (JB2008), Jacchia-Roberts 1971 (JR1971), NRL MSIS 2000 (MSIS2000),
+    Exponential (ExpAtmo), and None (None)
 
 # Returns
 - `rho::Number`: The density of the atmosphere at the provided time and point [kg/m^3].
@@ -35,7 +36,7 @@ Computes the atmospheric density at a point given the date, position, eop_data, 
 function compute_density end
 
 @inline function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:JB2008}
+    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::JB2008
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
@@ -48,7 +49,7 @@ function compute_density end
 end
 
 @inline function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:JR1971}
+    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::JR1971
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
@@ -61,7 +62,7 @@ end
 end
 
 @inline function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:MSIS2000}
+    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::MSIS2000
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
@@ -74,7 +75,7 @@ end
 end
 
 @inline function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:ExpAtmo}
+    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::ExpAtmo
 )
     # Compute the JR1971 density if the point is less than 2500km altitude otherwise it's 0.0
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
@@ -86,15 +87,8 @@ end
 end
 
 @inline function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Val{:None}
+    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::None
 )
     # If None atmosphere provided return 0.0
     return 0.0
-end
-
-@inline @valsplit 4 function compute_density(
-    JD::Number, u::AbstractArray, eop_data::EopIau1980, AtmosphereType::Symbol
-)
-    # Valsplit.jl check if the provided atmosphere has an implemented method.
-    return throw(ArgumentError("Atmosphere Type Not Defined $AtmosphereType"))
 end

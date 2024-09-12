@@ -1,4 +1,4 @@
-@testset "Test Third Body Acceleration" begin
+@testset "Third Body Acceleration" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     eop_data = fetch_iers_eop()
     p = ComponentVector(; JD=JD)
