@@ -75,10 +75,10 @@ function acceleration(
         ITRF(), J2000(), current_time, relativity_model.eop_data
     )
 
-    J = (R_ITRF2J2000[:, 3]) * EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
+    J = @view(R_ITRF2J2000[:, 3]) * EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
 
-    sun_pos = relativity_model.sun_body(current_time, Position()) ./ 1E3
-    sun_vel = relativity_model.sun_body(current_time, Velocity()) ./ 1E3
+    sun_pos = SVector{3, TT}(relativity_model.sun_body(current_time, Position()) / 1E3)
+    sun_vel = SVector{3, TT}(relativity_model.sun_body(current_time, Velocity()) / 1E3)
 
     return relativity_accel(
         u,
@@ -134,20 +134,23 @@ parameters of an object.
 
 """
 function relativity_accel(
-    u::AbstractArray,
-    r_sun::AbstractArray,
-    v_sun::AbstractArray,
-    μ_body::Number,
-    μ_Sun::Number,
-    J::AbstractArray;
-    c::Number=SPEED_OF_LIGHT / 1E3,
-    γ::Number=1.0,
-    β::Number=1.0,
+    u::AbstractArray{UT},
+    r_sun::AbstractArray{RT},
+    v_sun::AbstractArray{VT},
+    μ_body::MT,
+    μ_Sun::MT2,
+    J::AbstractArray{JT};
+    c::CT=SPEED_OF_LIGHT / 1E3,
+    γ::GT=1.0,
+    β::BT=1.0,
     schwartzchild_effect::Bool=true,
     lense_thirring_effect::Bool=true,
     de_Sitter_effect::Bool=true,
-)
-    return SVector{3}(
+) where {UT, RT, VT, MT, MT2, JT, CT, GT, BT}
+
+    AT = promote_type(UT, RT, VT, MT, MT2, JT, CT, GT, BT)
+
+    return SVector{3, AT}(
         schwartzchild_effect * schwartzchild_acceleration(u, μ_body; c=c, γ=γ, β=β) +
         lense_thirring_effect * lense_thirring_acceleration(u, μ_body, J; c=c, γ=γ) +
         de_Sitter_effect * de_Sitter_acceleration(u, r_sun, v_sun, μ_Sun; c=c, γ=γ),
@@ -173,14 +176,17 @@ parameters of an object.
 - `schwartzchild_acceleration: SVector{3}`: The 3-dimensional schwartzchild acceleration acting on the spacecraft.
 
 """
-function schwartzchild_acceleration(
-    u::AbstractArray, μ_body::Number; c::Number=SPEED_OF_LIGHT, γ::Number=1.0, β::Number=1.0
-)
+@inline function schwartzchild_acceleration(
+    u::AbstractArray{UT}, μ_body::MT; c::CT=SPEED_OF_LIGHT, γ::GT=1.0, β::BT=1.0
+) where {UT, MT, CT, GT, BT}
+
+    RT = promote_type(UT, MT, CT, GT, BT)
+
     r = @view(u[1:3])
     r_norm = norm(r)
     ṙ = @view(u[4:6])
 
-    schwartzchild = SVector{3}(
+    schwartzchild = SVector{3, RT}(
         μ_body / ((c^2.0) * (r_norm^3.0)) * (
             ((2.0 * (β + γ)) * (μ_body / r_norm) - γ * dot(ṙ, ṙ)) * r +
             2.0 * (1.0 + γ) * dot(r, ṙ) * ṙ
@@ -213,18 +219,21 @@ parameters of an object.
 - `lense_thirring_acceleration: SVector{3}`: The 3-dimensional lense thirring acceleration acting on the spacecraft.
 
 """
-function lense_thirring_acceleration(
-    u::AbstractArray,
-    μ_body::Number,
-    J::AbstractArray;
-    c::Number=SPEED_OF_LIGHT,
-    γ::Number=1.0,
-)
+@inline function lense_thirring_acceleration(
+    u::AbstractArray{UT},
+    μ_body::MT,
+    J::AbstractArray{JT};
+    c::CT=SPEED_OF_LIGHT,
+    γ::GT=1.0,
+) where {UT, MT, JT, CT, GT}
+
+    RT = promote_type(UT, MT, JT, CT, GT)
+    
     r = @view(u[1:3])
     r_norm = norm(r)
     ṙ = @view(u[4:6])
 
-    lense_thirring = SVector{3}(
+    lense_thirring = SVector{3, RT}(
         (1.0 + γ) *
         (μ_body / ((c^2.0) * (r_norm^3.0))) *
         ((3.0 / r_norm^2) * cross(r, ṙ) * dot(r, J) + cross(ṙ, J)),
@@ -258,17 +267,20 @@ parameters of an object.
 - `de_Sitter_acceleration: SVector{3}`: The 3-dimensional de Sitter acceleration acting on the spacecraft.
 
 """
-function de_Sitter_acceleration(
-    u::AbstractArray,
-    r_sun::AbstractArray,
-    v_sun::AbstractArray,
-    μ_Sun::Number;
-    c::Number=SPEED_OF_LIGHT,
-    γ::Number=1.0,
-)
+@inline function de_Sitter_acceleration(
+    u::AbstractArray{UT},
+    r_sun::AbstractArray{ST},
+    v_sun::AbstractArray{VT},
+    μ_Sun::MT;
+    c::CT=SPEED_OF_LIGHT,
+    γ::GT=1.0,
+) where {UT, ST, VT, MT, CT, GT}
+
+    RT = promote_type(UT, ST, VT, MT, CT, GT)
+
     ṙ = @view(u[4:6])
 
-    de_sitter = SVector{3}(
+    de_sitter = SVector{3, RT}(
         (1.0 + 2.0 * γ) *
         (-μ_Sun / ((c^2.0) * (norm(-r_sun)^3.0))) *
         cross(cross(-v_sun, -r_sun), ṙ),
