@@ -14,14 +14,15 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 export Conical, Conical_Simplified, Cylindrical, INPE
-Conical() = :Conical
-Conical_Simplified() = :Conical_Simplified
-Cylindrical() = :Cylindrical
-INPE() = :INPE
+abstract type ShadowModelType end
+struct Conical <: ShadowModelType end
+struct Conical_Simplified <: ShadowModelType end
+struct Cylindrical <: ShadowModelType end
+struct INPE <: ShadowModelType end
 
 export shadow_model
 """
-    shadow_model(sat_pos::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, t::Number, ShadowModel::Symbol)
+    shadow_model(sat_pos::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, t::Number, ShadowModel::ShadowModelType)
 Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Earth's Shadow
 
 # Arguments
@@ -30,7 +31,7 @@ Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Ea
 - `sun_pos::AbstractArray`: The current Sun position.
 - `R_Sun::Number`: The radius of the Sun.
 - `R_Earth::Number`: The radius of the Earth.
-- `ShadowModel::Symbol`: The Earth shadow model to use. Current Options -- :Cylindrical, :Conical, :Conical_Simplified, :None
+- `ShadowModel::ShadowModelType`: The Earth shadow model to use. Current Options -- Cylindrical, Conical, Conical_Simplified, None
 
 # Returns
 
@@ -39,7 +40,7 @@ Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Ea
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::Val{:Cylindrical};
+    ShadowModel::Cylindrical;
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
@@ -60,7 +61,7 @@ end
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::Val{:INPE};
+    ShadowModel::INPE;
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
@@ -104,7 +105,7 @@ end
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::Val{:Conical_Simplified};
+    ShadowModel::Conical_Simplified;
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
@@ -129,7 +130,7 @@ end
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::Val{:Conical};
+    ShadowModel::Conical;
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
@@ -159,19 +160,9 @@ end
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::Val{:None};
+    ShadowModel::None;
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
     return 1.0
-end
-
-@valsplit 3 function shadow_model(
-    sat_pos::AbstractArray,
-    sun_pos::AbstractArray,
-    ShadowModel::Symbol;
-    R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
-)
-    return error(ArgumentError("Shadow Model is not Defined $ShadowModel"))
 end

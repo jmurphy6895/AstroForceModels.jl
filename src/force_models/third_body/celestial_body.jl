@@ -1,4 +1,17 @@
 #TODO: THIS PROBABLY BELONGS IN SATELLITE TOOLKIT CELESTIAL BODY
+export CelestialBody
+"""
+Creates a CelestialBody Object from a name
+Available: {Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, 
+
+Fields:
+-`CelestialBody{T<:Number}`: PlanetBody Object with Fields:
+    - `name::String`: Name of Object
+    - `central_body::String`: Name of Central Body Being Orbited
+    - `jpl_code::Int`: NAIF ID Code
+    - `μ::T`: Graviational Parameter [km/s]
+    - `Req::T`: Equatorial Radius [km]
+"""
 struct CelestialBody{T<:Number}
     name::Symbol
     central_body::Symbol
@@ -7,25 +20,8 @@ struct CelestialBody{T<:Number}
     Req::T
 end
 
-#TODO: NEED TO DETERMINE HOW TO GENERALIZE & ADD MORE BODIES
-export CelestialBody
-"""
-Creates a CelestialBody Object from a name
-Available: {Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, }
-
-Arguments:
-- `name::String`: Name of the Planet Object (Casing Doesn't Matter)
-- (Optional) `T::DataType`: Datatype of PlanetBody Fields
-
-Returns:
--`CelestialBody`: PlanetBody Object with Fields:
-    - `name::String`: Name of Object
-    - `central_body::String`: Name of Central Body Being Orbited
-    - `jpl_code::Int`: NAIF ID Code
-    - `μ::T`: Graviational Parameter [km/s]
-    - `Req::T`: Equatorial Radius [km]
-"""
-function CelestialBody(name::Val{:Sun}; T::DataType=Float64)
+export SunBody, MoonBody, EarthBody
+function SunBody(; T::DataType=Float64)
     return CelestialBody{T}(
         :Sun,                           # Name
         :None,                          # Central Body
@@ -35,7 +31,7 @@ function CelestialBody(name::Val{:Sun}; T::DataType=Float64)
     )
 end
 
-function CelestialBody(name::Val{:Earth}; T::DataType=Float64)
+function EarthBody(; T::DataType=Float64)
     return CelestialBody{T}(
         :Earth,                         # Name
         :Sun,                           # Central Body
@@ -45,7 +41,7 @@ function CelestialBody(name::Val{:Earth}; T::DataType=Float64)
     )
 end
 
-function CelestialBody(name::Val{:Moon}; T::DataType=Float64)
+function MoonBody(; T::DataType=Float64)
     return CelestialBody{T}(
         :Moon,                          # Name
         :Earth,                         # Central Body
@@ -54,16 +50,3 @@ function CelestialBody(name::Val{:Moon}; T::DataType=Float64)
         T(1738.1),                      # Equatorial Radius [km]
     )
 end
-
-@valsplit 1 function CelestialBody(name::Symbol; T::DataType=Float64)
-    throw(
-        ArgumentError(
-            "Celestial body $name not recognized or not yet supported. Consider creating custom CelestialBody instead.",
-        ),
-    )
-end
-
-export SunBody, MoonBody
-SunBody(; T::DataType=Float64) = CelestialBody(:Sun; T=T)
-EarthBody(; T::DataType=Float64) = CelestialBody(:Earth; T=T)
-MoonBody(; T::DataType=Float64) = CelestialBody(:Moon; T=T)

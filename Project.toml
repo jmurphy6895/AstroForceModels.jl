@@ -15,9 +15,9 @@ SatelliteToolboxGravityModels = "bd9e9728-6f7b-4d28-9e50-c765cb1b7c8c"
 SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
 SpaceIndices = "5a540a4e-639f-452a-b107-23ea09ed4d36"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
-ValSplit = "0625e100-946b-11ec-09cd-6328dd093154"
 
 [compat]
+AllocCheck = "0.1.3"
 AngleBetweenVectors = "0.3"
 Aqua = "0.8"
 ComponentArrays = "0.15"
@@ -31,12 +31,12 @@ SatelliteToolboxTransformations = "0.1"
 SpaceIndices = "1"
 StaticArraysCore = "1"
 Test = "1"
-ValSplit = "0.1"
 julia = "1.9"
 
 [extras]
+AllocCheck = "9b6a8646-10ed-4001-bbdc-1d2f46dfbb1a"
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Aqua", "Test"]
+test = ["AllocCheck", "Aqua", "Test"]

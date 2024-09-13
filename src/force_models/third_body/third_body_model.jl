@@ -7,7 +7,13 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 export Vallado
-Vallado() = :Vallado
+abstract type AbstractEphemerisType end
+struct Vallado <: AbstractEphemerisType end
+
+export Position, Velocity
+abstract type EphemerisReturn end
+struct Position <: EphemerisReturn end
+struct Velocity <: EphemerisReturn end
 
 export ThirdBodyModel
 """
@@ -16,14 +22,14 @@ Contains information to compute the acceleration of a third body force acting on
 
 # Fields
 - `body::CelestialBody`: Celestial body acting on the craft.
-- `ephem_type::Symbol`: Ephemeris type used to compute body's position. Options are currently :Vallado.
+- `ephem_type::AbstractEphemerisType`: Ephemeris type used to compute body's position. Options are currently Vallado().
 """
 @with_kw struct ThirdBodyModel{T} <: AbstractNonPotentialBasedForce where {
     T<:Union{EopIau1980,EopIau2000A,Nothing}
 }
-    body::CelestialBody
+    body::CelestialBody = SunBody
     eop_data::T = nothing
-    ephem_type::Symbol = Vallado()
+    ephem_type::AbstractEphemerisType = Vallado()
 end
 
 #TODO: EXPAND TO SPICE WITH EXTENSIONS
@@ -39,28 +45,21 @@ Computes the position of the celestial body using Vallado's ephemeris
 - `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
 """
 function get_position(
-    ephem_type::Val{:Vallado}, body::CelestialBody, eop_data::T, time::Number
-) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
+    ephem_type::Vallado, body::CelestialBody, eop_data::T, time::TT
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing},TT}
+
+    # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
+    R_MOD2J2000::SatelliteToolboxTransformations.DCM{TT} = r_eci_to_eci(
+        MOD(), J2000(), time, eop_data
+    )
+
     if body.name == :Sun
         pos_mod = sun_position_mod(time)
     elseif body.name == :Moon
         pos_mod = moon_position_mod(time)
-    else
-        throw(
-            ArgumentError("Vallado ephemeris is only supported by Sun and Moon Currently")
-        )
     end
 
-    # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
-    R_MOD2J2000 = r_eci_to_eci(MOD(), J2000(), time, eop_data)
-
     return R_MOD2J2000 * pos_mod
-end
-
-@valsplit 1 function get_position(
-    ephem_type::Symbol, body::CelestialBody, eop_data::T, time::Number
-) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
-    throw(ArgumentError("$ephem_type is not supported. Current options are :Vallado"))
 end
 
 """
@@ -75,23 +74,22 @@ Computes the velocity of the celestial body using Vallado's ephemeris
 - `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
 """
 function get_velocity(
-    ephem_type::Val{:Vallado}, body::CelestialBody, eop_data::T, time::Number
-) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
+    ephem_type::Vallado, body::CelestialBody, eop_data::T, time::TT
+) where {T<:Union{EopIau1980,EopIau2000A,Nothing},TT}
     if body.name == :Sun
-        pos_mod = sun_velocity_mod(time)
+        vel_mod = sun_velocity_mod(time)
     else
         throw(
             ArgumentError("Vallado velocity ephemeris is only supported by Sun Currently")
         )
     end
 
-    return pos_mod
-end
+    # Compute the MOD frame in the J2000 frame to rotate the sun's position vector
+    R_MOD2J2000::SatelliteToolboxTransformations.DCM{TT} = r_eci_to_eci(
+        MOD(), J2000(), time, eop_data
+    )
 
-@valsplit 1 function get_velocity(
-    ephem_type::Symbol, body::CelestialBody, eop_data::T, time::Number
-) where {T<:Union{EopIau1980,EopIau2000A,Nothing}}
-    throw(ArgumentError("$ephem_type is not supported. Current options are :Vallado"))
+    return R_MOD2J2000 * vel_mod
 end
 
 #TODO: ADD FULL STATE WITH SPICE SUPPORT
@@ -106,16 +104,10 @@ Wraps get_position().
 - `body_position: SVector{3}`: The 3-dimensional third body position in the J2000 frame.
 
 """
-function (model::ThirdBodyModel)(t::Number; return_type::Symbol=:position)
-    if return_type == :position
-        return get_position(model.ephem_type, model.body, model.eop_data, t)
-    elseif return_type == :velocity
-        return get_velocity(model.ephem_type, model.body, model.eop_data, t)
-    else
-        throw(
-            ArgumentError(
-                "Return type $return_type not recognized. Supported options are :position, :velocity, and :full_state",
-            ),
-        )
-    end
+function (model::ThirdBodyModel)(t::Number, return_type::Position)
+    return get_position(model.ephem_type, model.body, model.eop_data, t)
+end
+
+function (model::ThirdBodyModel)(t::Number, return_type::Velocity)
+    return get_velocity(model.ephem_type, model.body, model.eop_data, t)
 end

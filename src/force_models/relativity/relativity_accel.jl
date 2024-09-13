@@ -39,7 +39,7 @@ Contains information to compute the acceleration of relativity acting on a space
         body=EarthBody(), eop_data=fetch_iers_eop()
     )
     sun_body::ThirdBodyModel = ThirdBodyModel(; body=SunBody(), eop_data=fetch_iers_eop())
-    eop_data::Union{EopIau1980,EopIau2000A} = fetch_iers_eop()
+    eop_data::EopIau1980 = fetch_iers_eop()
     c::Number = SPEED_OF_LIGHT / 1E3
     γ::Number = 1.0
     β::Number = 1.0
@@ -65,18 +65,20 @@ parameters of an object.
 
 """
 function acceleration(
-    u::AbstractArray, p::ComponentVector, t::Number, relativity_model::RelativityModel
-)
-    J = SVector{3}(
-        normalize(
-            r_ecef_to_eci(ITRF(), J2000(), p.JD + t / 86400.0, relativity_model.eop_data)[
-                :, 3
-            ],
-        ) * EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS,
+    u::AbstractArray{UT}, p::ComponentVector{PT}, t::TT, relativity_model::RelativityModel
+) where {UT,PT,TT}
+    RT = promote_type(UT, PT, TT)
+
+    current_time = p.JD + t / 86400.0
+
+    R_ITRF2J2000::SatelliteToolboxTransformations.DCM{RT} = r_ecef_to_eci(
+        ITRF(), J2000(), current_time, relativity_model.eop_data
     )
 
-    sun_pos = relativity_model.sun_body(p.JD + t / 86400.0) ./ 1E3
-    sun_vel = relativity_model.sun_body(p.JD + t / 86400.0; return_type=:velocity) ./ 1E3
+    J = (R_ITRF2J2000[:, 3]) * EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
+
+    sun_pos = relativity_model.sun_body(current_time, Position()) ./ 1E3
+    sun_vel = relativity_model.sun_body(current_time, Velocity()) ./ 1E3
 
     return relativity_accel(
         u,

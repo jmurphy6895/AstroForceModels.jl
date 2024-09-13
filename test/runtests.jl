@@ -1,3 +1,4 @@
+using AllocCheck
 using Aqua
 using AstroForceModels
 using ComponentArrays
@@ -35,3 +36,9 @@ end
 @testset "Aqua.jl" begin
     Aqua.test_all(AstroForceModels; ambiguities=(recursive = false))
 end
+
+#TODO: GET THESE WORKING
+#@testset "AllocCheck.jl" begin
+#    # Force Model Allocation Check
+#    include("test_allocations.jl")
+#end
