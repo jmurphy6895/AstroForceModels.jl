@@ -25,12 +25,12 @@ Contains information to compute the acceleration of a drag force on a spacecraft
 - `atmosphere_model::Symbol`: The atmospheric model for computing the density.
 - `eop_data::EopIau1980`: Earth orientation parameters to help compute the density with the atmospheric model.
 """
-struct DragAstroModel{T,V} <: AbstractNonPotentialBasedForce where {
-    T<:AbstractSatelliteDragModel,V<:Union{EopIau1980,EopIau2000A}
+struct DragAstroModel{ST, AT, EoT} <: AbstractNonPotentialBasedForce where {
+    ST<:AbstractSatelliteDragModel,AT<:AtmosphericModelType,EoT<:Union{EopIau1980,EopIau2000A}, 
 }
-    satellite_drag_model::T
-    atmosphere_model::AtmosphericModelType
-    eop_data::V
+    satellite_drag_model::ST
+    atmosphere_model::AT
+    eop_data::EoT
 end
 
 """'

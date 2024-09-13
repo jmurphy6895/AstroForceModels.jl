@@ -34,18 +34,18 @@ Contains information to compute the acceleration of relativity acting on a space
 - `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
 - `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
 """
-@with_kw struct RelativityModel <: AbstractNonPotentialBasedForce
-    central_body::ThirdBodyModel = ThirdBodyModel(;
+@with_kw struct RelativityModel{ST, EoT, CT, GT, BT, ET} <: AbstractNonPotentialBasedForce where {ST<:ThirdBodyModel, EoT<:Union{EopIau1980,EopIau2000A}, CT<:Number, GT<:Number, BT<:Number, ET<:Bool}
+    central_body::ST = ThirdBodyModel(;
         body=EarthBody(), eop_data=fetch_iers_eop()
     )
-    sun_body::ThirdBodyModel = ThirdBodyModel(; body=SunBody(), eop_data=fetch_iers_eop())
-    eop_data::EopIau1980 = fetch_iers_eop()
-    c::Number = SPEED_OF_LIGHT / 1E3
-    γ::Number = 1.0
-    β::Number = 1.0
-    schwartzchild_effect::Bool = true
-    lense_thirring_effect::Bool = true
-    de_Sitter_effect::Bool = true
+    sun_body::ST = ThirdBodyModel(; body=SunBody(), eop_data=fetch_iers_eop())
+    eop_data::EoT = fetch_iers_eop()
+    c::CT = SPEED_OF_LIGHT / 1E3
+    γ::GT = 1.0
+    β::BT = 1.0
+    schwartzchild_effect::ET = true
+    lense_thirring_effect::ET = true
+    de_Sitter_effect::ET = true
 end
 
 """

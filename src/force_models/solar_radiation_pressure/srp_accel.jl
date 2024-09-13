@@ -24,13 +24,13 @@ Contains information to compute the acceleration of a SRP a spacecraft.
 - `satellite_srp_model::AbstractSatelliteDragModel`: The satellite srp model for computing the ballistic coefficient.
 - `sun_data::ThirdBodyModel`: The data to compute the Sun's position.
 """
-@with_kw struct SRPAstroModel{T,V,W} <: AbstractNonPotentialBasedForce where {
-    T<:AbstractSatelliteSRPModel,V<:ThirdBodyModel,W<:Union{EopIau1980,EopIau2000A}
+@with_kw struct SRPAstroModel{ST, SDT, EoT, SMT} <: AbstractNonPotentialBasedForce where {
+    ST<:AbstractSatelliteSRPModel,SDT<:ThirdBodyModel,EoT<:Union{EopIau1980,EopIau2000A}, SMT<:ShadowModelType
 }
-    satellite_srp_model::T
-    sun_data::V
-    eop_data::W
-    shadow_model::ShadowModelType = Conical()
+    satellite_srp_model::ST
+    sun_data::SDT
+    eop_data::EoT
+    shadow_model::SMT = Conical()
 end
 
 """
