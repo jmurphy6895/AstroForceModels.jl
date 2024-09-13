@@ -182,9 +182,9 @@ parameters of an object.
 
     RT = promote_type(UT, MT, CT, GT, BT)
 
-    r = @view(u[1:3])
+    r = SVector{3, UT}(u[1], u[2], u[3])
     r_norm = norm(r)
-    ṙ = @view(u[4:6])
+    ṙ = SVector{3, UT}(u[4], u[5], u[6])
 
     schwartzchild = SVector{3, RT}(
         μ_body / ((c^2.0) * (r_norm^3.0)) * (
@@ -229,9 +229,9 @@ parameters of an object.
 
     RT = promote_type(UT, MT, JT, CT, GT)
     
-    r = @view(u[1:3])
+    r = SVector{3, UT}(u[1], u[2], u[3])
     r_norm = norm(r)
-    ṙ = @view(u[4:6])
+    ṙ = SVector{3, UT}(u[4], u[5], u[6])
 
     lense_thirring = SVector{3, RT}(
         (1.0 + γ) *
@@ -278,7 +278,7 @@ parameters of an object.
 
     RT = promote_type(UT, ST, VT, MT, CT, GT)
 
-    ṙ = @view(u[4:6])
+    ṙ = SVector{3, UT}(u[4], u[5], u[6])
 
     de_sitter = SVector{3, RT}(
         (1.0 + 2.0 * γ) *
