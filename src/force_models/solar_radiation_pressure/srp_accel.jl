@@ -24,13 +24,16 @@ Contains information to compute the acceleration of a SRP a spacecraft.
 - `satellite_srp_model::AbstractSatelliteDragModel`: The satellite srp model for computing the ballistic coefficient.
 - `sun_data::ThirdBodyModel`: The data to compute the Sun's position.
 """
-@with_kw struct SRPAstroModel{T,V,W} <: AbstractNonPotentialBasedForce where {
-    T<:AbstractSatelliteSRPModel,V<:ThirdBodyModel,W<:Union{EopIau1980,EopIau2000A}
+@with_kw struct SRPAstroModel{ST,SDT,EoT,SMT} <: AbstractNonPotentialBasedForce where {
+    ST<:AbstractSatelliteSRPModel,
+    SDT<:ThirdBodyModel,
+    EoT<:Union{EopIau1980,EopIau2000A},
+    SMT<:ShadowModelType,
 }
-    satellite_srp_model::T
-    sun_data::V
-    eop_data::W
-    shadow_model::ShadowModelType = Conical()
+    satellite_srp_model::ST
+    sun_data::SDT
+    eop_data::EoT
+    shadow_model::SMT = Conical()
 end
 
 """
@@ -96,15 +99,15 @@ force can be computed using the a Cannonball model with the following equation
 - `SVector{3}{Number}`: Inertial acceleration from the 3rd body
 """
 function srp_accel(
-    u::AbstractArray,
+    u::AbstractArray{UT},
     sun_pos::AbstractArray,
     RC::Number;
     ShadowModel::ShadowModelType=Conical(),
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
     Ψ::Number=SOLAR_FLUX,
-)
-    sat_pos = @view(u[1:3])
+) where {UT}
+    sat_pos = SVector{3,UT}(u[1], u[2], u[3])
 
     # Compute the lighting factor
     F = shadow_model(sat_pos, sun_pos, ShadowModel; R_Sun=R_Sun, R_Earth=R_Earth)
@@ -117,6 +120,6 @@ function srp_accel(
         (
             F * RC * Ψ * (ASTRONOMICAL_UNIT / norm(R_spacecraft_Sun))^2 * R_spacecraft_Sun /
             norm(R_spacecraft_Sun)
-        ) ./ 1E3,
+        ) / 1E3,
     )
 end

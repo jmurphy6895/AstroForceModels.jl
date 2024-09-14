@@ -1,6 +1,5 @@
 module AstroForceModels
 
-using AngleBetweenVectors
 using ComponentArrays, StaticArraysCore
 using LinearAlgebra
 using Parameters
@@ -17,6 +16,7 @@ abstract type AbstractNonPotentialBasedForce <: AbstractAstroForceModel end
 abstract type AbstractPotentialBasedForce <: AbstractAstroForceModel end
 
 include("./constants.jl")
+include("./utils.jl")
 
 include("./force_models/drag/satellite_shape_model.jl")
 include("./force_models/drag/density_calculator.jl")

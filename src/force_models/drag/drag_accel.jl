@@ -25,12 +25,14 @@ Contains information to compute the acceleration of a drag force on a spacecraft
 - `atmosphere_model::Symbol`: The atmospheric model for computing the density.
 - `eop_data::EopIau1980`: Earth orientation parameters to help compute the density with the atmospheric model.
 """
-struct DragAstroModel{T,V} <: AbstractNonPotentialBasedForce where {
-    T<:AbstractSatelliteDragModel,V<:Union{EopIau1980,EopIau2000A}
+struct DragAstroModel{ST,AT,EoT} <: AbstractNonPotentialBasedForce where {
+    ST<:AbstractSatelliteDragModel,
+    AT<:AtmosphericModelType,
+    EoT<:Union{EopIau1980,EopIau2000A},
 }
-    satellite_drag_model::T
-    atmosphere_model::AtmosphericModelType
-    eop_data::V
+    satellite_drag_model::ST
+    atmosphere_model::AT
+    eop_data::EoT
 end
 
 """'
@@ -58,7 +60,7 @@ function acceleration(
     )
 
     #TODO: OFFER OPTION TO COMPUTE FROM EOP or SPICE EPHEMERIS 
-    ω_vec = SVector{3}([0.0; 0.0; EARTH_ANGULAR_SPEED])
+    ω_vec = SVector{3,Float64}(0.0, 0.0, EARTH_ANGULAR_SPEED)
 
     # Compute the ballistic coefficient
     BC = ballistic_coefficient(u, p, t, drag_model.satellite_drag_model)
@@ -99,13 +101,16 @@ The acceleration from drag is then computed with a cannonball model as
 - `SVector{3}{Number}`: Inertial acceleration from drag
 """
 @inline function drag_accel(
-    u::AbstractArray, rho::Number, BC::Number, ω_vec::AbstractArray, t::Number
-)
+    u::AbstractArray{UT}, rho::RT, BC::BT, ω_vec::AbstractArray{WT}, t::TT
+) where {UT,RT,BT,WT,TT}
+    AT = promote_type(UT, RT, BT, WT, TT)
 
     # Compute Apparent Velocity w.r.t the Atmosphere using the Transport Theorem
     apparent_vel = @view(u[4:6]) - cross(ω_vec, @view(u[1:3]))
 
     # Scaled by 1E3 to convert to km/s
     # TODO: HANDLE UNITS BETTER
-    return SVector{3}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3)
+    accel = SVector{3,AT}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) * 1E3)
+
+    return accel
 end

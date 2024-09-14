@@ -4,7 +4,6 @@ authors = ["Jordan Murphy <jmurphy6895@gmail.com> and contributors"]
 version = "0.1.0"
 
 [deps]
-AngleBetweenVectors = "ec570357-d46e-52ed-9726-18773498274d"
 ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
@@ -18,7 +17,6 @@ StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [compat]
 AllocCheck = "0.1.3"
-AngleBetweenVectors = "0.3"
 Aqua = "0.8"
 ComponentArrays = "0.15"
 LinearAlgebra = "1"
