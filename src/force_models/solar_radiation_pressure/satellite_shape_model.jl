@@ -25,7 +25,8 @@ fixed reflectivity coefficient.
 - `reflectivity_coeff::Number`: The reflectivity coefficient of the spacecraft.
 - `reflectivity_ballistic_coeff::Number`: The fixed ballistic coefficient to use.
 """
-struct CannonballFixedSRP{RT, MT, RcT, RbT} <: AbstractSatelliteSRPModel where {RT<:Number, MT<:Number, RcT<:Number, RbT<:Number}
+struct CannonballFixedSRP{RT,MT,RcT,RbT} <:
+       AbstractSatelliteSRPModel where {RT<:Number,MT<:Number,RcT<:Number,RbT<:Number}
     radius::RT
     mass::MT
     reflectivity_coeff::RcT

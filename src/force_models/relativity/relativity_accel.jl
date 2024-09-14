@@ -34,10 +34,16 @@ Contains information to compute the acceleration of relativity acting on a space
 - `lense_thirring_effect::Bool`: Include the Lense Thirring relativity effect.
 - `de_Sitter_effect::Bool`: Include the De Sitter relativity effect.
 """
-@with_kw struct RelativityModel{ST, EoT, CT, GT, BT, ET} <: AbstractNonPotentialBasedForce where {ST<:ThirdBodyModel, EoT<:Union{EopIau1980,EopIau2000A}, CT<:Number, GT<:Number, BT<:Number, ET<:Bool}
-    central_body::ST = ThirdBodyModel(;
-        body=EarthBody(), eop_data=fetch_iers_eop()
-    )
+@with_kw struct RelativityModel{ST,EoT,CT,GT,BT,ET} <:
+                AbstractNonPotentialBasedForce where {
+    ST<:ThirdBodyModel,
+    EoT<:Union{EopIau1980,EopIau2000A},
+    CT<:Number,
+    GT<:Number,
+    BT<:Number,
+    ET<:Bool,
+}
+    central_body::ST = ThirdBodyModel(; body=EarthBody(), eop_data=fetch_iers_eop())
     sun_body::ST = ThirdBodyModel(; body=SunBody(), eop_data=fetch_iers_eop())
     eop_data::EoT = fetch_iers_eop()
     c::CT = SPEED_OF_LIGHT / 1E3
@@ -77,8 +83,8 @@ function acceleration(
 
     J = @view(R_ITRF2J2000[:, 3]) * EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
 
-    sun_pos = SVector{3, TT}(relativity_model.sun_body(current_time, Position()) / 1E3)
-    sun_vel = SVector{3, TT}(relativity_model.sun_body(current_time, Velocity()) / 1E3)
+    sun_pos = SVector{3,TT}(relativity_model.sun_body(current_time, Position()) / 1E3)
+    sun_vel = SVector{3,TT}(relativity_model.sun_body(current_time, Velocity()) / 1E3)
 
     return relativity_accel(
         u,
@@ -146,11 +152,10 @@ function relativity_accel(
     schwartzchild_effect::Bool=true,
     lense_thirring_effect::Bool=true,
     de_Sitter_effect::Bool=true,
-) where {UT, RT, VT, MT, MT2, JT, CT, GT, BT}
-
+) where {UT,RT,VT,MT,MT2,JT,CT,GT,BT}
     AT = promote_type(UT, RT, VT, MT, MT2, JT, CT, GT, BT)
 
-    return SVector{3, AT}(
+    return SVector{3,AT}(
         schwartzchild_effect * schwartzchild_acceleration(u, μ_body; c=c, γ=γ, β=β) +
         lense_thirring_effect * lense_thirring_acceleration(u, μ_body, J; c=c, γ=γ) +
         de_Sitter_effect * de_Sitter_acceleration(u, r_sun, v_sun, μ_Sun; c=c, γ=γ),
@@ -178,15 +183,14 @@ parameters of an object.
 """
 @inline function schwartzchild_acceleration(
     u::AbstractArray{UT}, μ_body::MT; c::CT=SPEED_OF_LIGHT, γ::GT=1.0, β::BT=1.0
-) where {UT, MT, CT, GT, BT}
-
+) where {UT,MT,CT,GT,BT}
     RT = promote_type(UT, MT, CT, GT, BT)
 
-    r = SVector{3, UT}(u[1], u[2], u[3])
+    r = SVector{3,UT}(u[1], u[2], u[3])
     r_norm = norm(r)
-    ṙ = SVector{3, UT}(u[4], u[5], u[6])
+    ṙ = SVector{3,UT}(u[4], u[5], u[6])
 
-    schwartzchild = SVector{3, RT}(
+    schwartzchild = SVector{3,RT}(
         μ_body / ((c^2.0) * (r_norm^3.0)) * (
             ((2.0 * (β + γ)) * (μ_body / r_norm) - γ * dot(ṙ, ṙ)) * r +
             2.0 * (1.0 + γ) * dot(r, ṙ) * ṙ
@@ -220,20 +224,15 @@ parameters of an object.
 
 """
 @inline function lense_thirring_acceleration(
-    u::AbstractArray{UT},
-    μ_body::MT,
-    J::AbstractArray{JT};
-    c::CT=SPEED_OF_LIGHT,
-    γ::GT=1.0,
-) where {UT, MT, JT, CT, GT}
-
+    u::AbstractArray{UT}, μ_body::MT, J::AbstractArray{JT}; c::CT=SPEED_OF_LIGHT, γ::GT=1.0
+) where {UT,MT,JT,CT,GT}
     RT = promote_type(UT, MT, JT, CT, GT)
-    
-    r = SVector{3, UT}(u[1], u[2], u[3])
-    r_norm = norm(r)
-    ṙ = SVector{3, UT}(u[4], u[5], u[6])
 
-    lense_thirring = SVector{3, RT}(
+    r = SVector{3,UT}(u[1], u[2], u[3])
+    r_norm = norm(r)
+    ṙ = SVector{3,UT}(u[4], u[5], u[6])
+
+    lense_thirring = SVector{3,RT}(
         (1.0 + γ) *
         (μ_body / ((c^2.0) * (r_norm^3.0))) *
         ((3.0 / r_norm^2) * cross(r, ṙ) * dot(r, J) + cross(ṙ, J)),
@@ -274,13 +273,12 @@ parameters of an object.
     μ_Sun::MT;
     c::CT=SPEED_OF_LIGHT,
     γ::GT=1.0,
-) where {UT, ST, VT, MT, CT, GT}
-
+) where {UT,ST,VT,MT,CT,GT}
     RT = promote_type(UT, ST, VT, MT, CT, GT)
 
-    ṙ = SVector{3, UT}(u[4], u[5], u[6])
+    ṙ = SVector{3,UT}(u[4], u[5], u[6])
 
-    de_sitter = SVector{3, RT}(
+    de_sitter = SVector{3,RT}(
         (1.0 + 2.0 * γ) *
         (-μ_Sun / ((c^2.0) * (norm(-r_sun)^3.0))) *
         cross(cross(-v_sun, -r_sun), ṙ),

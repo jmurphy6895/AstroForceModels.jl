@@ -1,11 +1,18 @@
-function angle_between_vectors(v1::AbstractVector, v2::AbstractVector)
-    unitv1 = normalize(v1)
-    unitv2 = normalize(v2)
+@inline function angle_between_vectors(
+    v1::AbstractVector{T1}, v2::AbstractVector{T2}
+) where {T1,T2}
+    T = promote_type(T1, T2)
 
-    y = unitv1 .- unitv2
-    x = unitv1 .+ unitv2
+    unitv1 = SVector{length(v1),T1}(normalize(v1))
+    unitv2 = SVector{length(v2),T2}(normalize(v2))
 
-    a = 2 * atan(norm2(y), norm2(x))
+    y = unitv1 - unitv2
+    x = unitv1 + unitv2
 
-    !(signbit(a) || signbit(float(T)(pi) - a)) ? a : (signbit(a) ? zero(T) : float(T)(pi))
+    a = 2.0 * atan(sum(abs2, y), sum(abs2, x))
+
+    angle::T =
+        !(signbit(a) || signbit(float(T)(π) - a)) ? a : (signbit(a) ? zero(T) : float(T)(π))
+
+    return angle
 end

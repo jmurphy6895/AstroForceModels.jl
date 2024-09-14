@@ -113,10 +113,8 @@ end
 
     con_a = asin(R_Sun / norm(R_spacecraft_Sun))
     con_b = asin(R_Earth / norm(sat_pos))
-    
-    con_c = angle_between_vectors(
-        R_spacecraft_Sun, sat_pos
-    )
+
+    con_c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
 
     if con_c ≥ (con_b + con_a)
         shadow_factor = 1.0
@@ -125,7 +123,7 @@ end
     else
         shadow_factor = 0.5 + (con_c - con_b) / (2.0 * con_a)
     end
-    
+
     return shadow_factor
 end
 
@@ -140,22 +138,21 @@ end
 
     con_a = asin(R_Sun / norm(R_spacecraft_Sun))
     con_b = asin(R_Earth / norm(sat_pos))
-    
-    con_c = angle_between_vectors(
-        R_spacecraft_Sun, sat_pos
-    )
+
+    con_c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
 
     if con_c ≥ (con_b + con_a)
         shadow_factor = 1.0
     elseif con_c < (con_b - con_a)
         shadow_factor = 0.0
     elseif con_c < (con_a - con_b)
-        shadow_factor = 1.0 - (con_b^2) / (con_a^2)
+        shadow_factor = 1.0 - (con_b^2.0) / (con_a^2.0)
     else
-        x = (con_c^2 + con_a^2 - con_b^2) / (2.0 * con_c)
-        y = √(con_a^2 - x^2)
-        area = con_a^2 * acos(x / con_a) + con_b^2 * acos((con_c - x) / con_b) - con_c * y
-        shadow_factor = 1.0 - area / (π * con_a^2)
+        x = (con_c^2.0 + con_a^2.0 - con_b^2.0) / (2.0 * con_c)
+        y = √(con_a^2.0 - x^2.0)
+        area =
+            con_a^2.0 * acos(x / con_a) + con_b^2.0 * acos((con_c - x) / con_b) - con_c * y
+        shadow_factor = 1.0 - area / (π * con_a^2.0)
     end
 
     return shadow_factor

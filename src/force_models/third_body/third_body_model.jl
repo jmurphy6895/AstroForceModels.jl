@@ -24,8 +24,8 @@ Contains information to compute the acceleration of a third body force acting on
 - `body::CelestialBody`: Celestial body acting on the craft.
 - `ephem_type::AbstractEphemerisType`: Ephemeris type used to compute body's position. Options are currently Vallado().
 """
-@with_kw struct ThirdBodyModel{BT, EoT, EpT} <: AbstractNonPotentialBasedForce where {
-    BT<:CelestialBody, EoT<:Union{EopIau1980,EopIau2000A,Nothing}, EpT<:AbstractEphemerisType
+@with_kw struct ThirdBodyModel{BT,EoT,EpT} <: AbstractNonPotentialBasedForce where {
+    BT<:CelestialBody,EoT<:Union{EopIau1980,EopIau2000A,Nothing},EpT<:AbstractEphemerisType
 }
     body::BT = SunBody
     eop_data::EoT = nothing

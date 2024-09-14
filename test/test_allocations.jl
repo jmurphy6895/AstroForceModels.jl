@@ -19,7 +19,8 @@
 
     drag_model = DragAstroModel(satellite_drag_model, ExpAtmo(), eop_data)
 
-    @check_allocs drag_accel(state, p, t, drag_model) = acceleration(state, p, t, drag_model)
+    @check_allocs drag_accel(state, p, t, drag_model) =
+        acceleration(state, p, t, drag_model)
     drag_accel(state, p, t, drag_model)
 end
 
@@ -44,7 +45,7 @@ end
         -1.1880157328553503
     ] #km, km/s
 
-    @check_allocs zonal_accel(state, p, t, grav_model) = 
+    @check_allocs zonal_accel(state, p, t, grav_model) =
         acceleration(state, p, t, grav_model)
     zonal_accel(state, p, t, grav_model)
 end
@@ -70,7 +71,7 @@ end
 
     @check_allocs lense_thirring_accel(state, p, t, satellite_lense_thirring_model) =
         acceleration(state, p, t, satellite_lense_thirring_model)
-    
+
     lense_thirring_accel(state, p, t, satellite_lense_thirring_model)
 
     satellite_de_sitter_model = RelativityModel(;
@@ -90,7 +91,7 @@ end
     schwartzchild_accel(state, p, t, satellite_schwartzchild_model)
 end
 
-#@testset "SRP Allocations" begin
+@testset "SRP Allocations" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
     t = 0.0
@@ -112,14 +113,9 @@ end
 
     srp_model = SRPAstroModel(satellite_srp_model, sun_model, eop_data, Conical())
 
-    @check_allocs srp_accel(state, p, t, srp_model) = 
-        acceleration(state, p, t, srp_model)
+    @check_allocs srp_accel(state, p, t, srp_model) = acceleration(state, p, t, srp_model)
 
-    try
-        srp_accel(state, p, t, srp_model)
-    catch err
-        err.errors[1]
-    end
+    srp_accel(state, p, t, srp_model)
 end
 
 @testset "Third Body Allocations" begin
@@ -148,3 +144,11 @@ end
     sun_accel(state, p, t, sun_third_body)
     moon_accel(state, p, t, moon_third_body)
 end
+
+sat_pos = state[1:3]
+sun_pos = [1e9; 0.0; 0.0]
+
+@code_warntype shadow_model(rand(3), rand(3), Conical())
+rpts = JET.get_reports(report)
+
+ascend(rpts[1])
