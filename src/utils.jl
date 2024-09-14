@@ -9,7 +9,7 @@
     y = unitv1 - unitv2
     x = unitv1 + unitv2
 
-    a = 2.0 * atan(sum(abs2, y), sum(abs2, x))
+    a = 2.0 * atan(norm(y), norm(x))
 
     angle::T =
         !(signbit(a) || signbit(float(T)(π) - a)) ? a : (signbit(a) ? zero(T) : float(T)(π))
