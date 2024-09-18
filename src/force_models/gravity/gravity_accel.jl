@@ -13,18 +13,21 @@
 #   [1] 
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+export GravityHarmonicsAstroModel, KeplerianGravityAstroModel
 
-export GravityHarmonicsAstroModel
+abstract type AbstractGravityAstroModel <: AbstractPotentialBasedForce end
 
 """
-SRP Astro Model struct
-Contains information to compute the acceleration of a SRP a spacecraft.
+Gravitational Harmonics Astro Model struct
+Contains information to compute the acceleration of a Gravitational Harmonics Model acting on a spacecraft.
 
 # Fields
-- `satellite_srp_model::AbstractSatelliteDragModel`: The satellite srp model for computing the ballistic coefficient.
-- `sun_data::ThirdBodyModel`: The data to compute the Sun's position.
+- `gravity_model::AbstractGravityModel`: The gravitational potential model and coefficient data.
+- `eop_data::Union{EopIau1980,EopIau2000A}`: The data compute the Earth's orientation.
+- `order::Int`: The maximum order to compute the graviational potential to, a value of -1 compute the maximum order of the supplied model. (Default=-1)
+- `degree::Int`: The maximum degree to compute the graviational potential to, a value of -1 compute the maximum degree of the supplied model. (Default=-1)
 """
-@with_kw struct GravityHarmonicsAstroModel{GT,EoT,V} <: AbstractPotentialBasedForce where {
+@with_kw struct GravityHarmonicsAstroModel{GT,EoT,V} <: AbstractGravityAstroModel where {
     GT<:AbstractGravityModel{<:Number},EoT<:Union{EopIau1980,EopIau2000A},V<:Int
 }
     gravity_model::GT
@@ -34,7 +37,7 @@ Contains information to compute the acceleration of a SRP a spacecraft.
 end
 
 """
-    acceleration(u::AbstractArray, p::ComponentVector, t::Number, srp_model::GravityHarmonicsAstroModel)
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, grav_model::GravityHarmonicsAstroModel)
 
 Computes the gravitational acceleration acting on a spacecraft given a gravity model and current state and 
 parameters of an object.
@@ -72,4 +75,41 @@ function acceleration(
 
     # Rotate into the J200 frame
     return R_J2002ITRF' * accel_itrf
+end
+
+"""
+Gravitational Keplerian Astro Model struct
+Contains information to compute the acceleration of a Gravitational Harmonics Model acting on a spacecraft.
+
+# Fields
+- `μ::Number`: The gravitational potential constant of the central body.
+"""
+@with_kw struct KeplerianGravityAstroModel{MT} <:
+                AbstractGravityAstroModel where {MT<:Number}
+    μ::MT = μ_EARTH
+end
+
+"""
+    acceleration(u::AbstractArray, p::ComponentVector, t::Number, grav_model::KeplerianGravityAstroModel)
+
+Computes the gravitational acceleration acting on a spacecraft given a gravity model and current state and 
+parameters of an object.
+
+# Arguments
+- `u::AbstractArray`: Current State of the simulation.
+- `p::ComponentVector`: Current parameters of the simulation.
+- `t::Number`: Current time of the simulation.
+- `gravity_model::KeplerianGravityAstroModel`: Gravity model struct containing the relevant information to compute the acceleration.
+
+# Returns
+- `acceleration: SVector{3}`: The 3-dimensional gravity acceleration acting on the spacecraft.
+
+"""
+function acceleration(
+    u::AbstractArray, p::ComponentVector, t::Number, grav_model::KeplerianGravityAstroModel
+)
+    r = SVector{3}(u[1], u[2], u[3])
+    r_norm = norm(r)
+
+    return SVector{3}((-grav_model.μ / (r_norm^3)) * r)
 end

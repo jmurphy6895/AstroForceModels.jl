@@ -35,7 +35,7 @@ struct DragAstroModel{ST,AT,EoT} <: AbstractNonPotentialBasedForce where {
     eop_data::EoT
 end
 
-"""'
+"""
     acceleration(u::AbstractArray, p::ComponentVector, t::Number, drag_model::DragAstroModel)
 
 Computes the drag acceleration acting on a spacecraft given a drag model and current state and 

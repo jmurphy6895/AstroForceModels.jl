@@ -31,6 +31,9 @@ using Test
 
     # Relativity Tests
     include("relativity/test_relativity.jl")
+
+    # Dynamics Builder
+    include("test_dynamics_builder.jl")
 end
 
 @testset "Aqua.jl" begin

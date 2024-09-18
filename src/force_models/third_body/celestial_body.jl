@@ -26,8 +26,8 @@ function SunBody(; T::DataType=Float64)
         :Sun,                           # Name
         :None,                          # Central Body
         1,                              # NAIF ID Code
-        T(1.32712440018E11),            # μ [km^2/s^3]
-        T(6.955E5),                     # Equatorial Radius [km]
+        T(μ_SUN),                       # μ [km^2/s^3]
+        T(R_SUN),                       # Equatorial Radius [km]
     )
 end
 
@@ -36,8 +36,8 @@ function EarthBody(; T::DataType=Float64)
         :Earth,                         # Name
         :Sun,                           # Central Body
         399,                            # NAIF ID Code
-        T(3.986004415e5),               # μ [km^2/s^3]
-        T(6378.1363),                   # Equatorial Radius [km]
+        T(μ_EARTH),                     # μ [km^2/s^3]
+        T(R_EARTH),                     # Equatorial Radius [km]
     )
 end
 
@@ -46,7 +46,7 @@ function MoonBody(; T::DataType=Float64)
         :Moon,                          # Name
         :Earth,                         # Central Body
         301,                            # NAIF ID Code
-        T(4.90486959E3),                # μ [km^2/s^3]
-        T(1738.1),                      # Equatorial Radius [km]
+        T(μ_MOON),                      # μ [km^2/s^3]
+        T(R_MOON),                      # Equatorial Radius [km]
     )
 end

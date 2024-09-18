@@ -34,6 +34,8 @@ include("./force_models/solar_radiation_pressure/srp_accel.jl")
 
 include("./force_models/gravity/gravity_accel.jl")
 
+include("./dynamics_builder.jl")
+
 export acceleration
 
 end
