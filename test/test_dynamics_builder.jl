@@ -1,5 +1,4 @@
-#@testset "Dynamics Builder" begin
-
+@testset "Dynamics Builder" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
 
@@ -29,19 +28,16 @@
     ] #km, km/s
 
     t = 0.0
+    model_list = (grav_model, sun_third_body, moon_third_body, srp_model, drag_model)
 
-    using AllocCheck
+    total_accel = build_dynamics_model(state, p, t, model_list)
 
-    @check_allocs f(u, p, t, models) = build_dynamics_model(u, p, t, models)
-    model_list = [grav_model, sun_third_body, moon_third_body, srp_model, drag_model]
+    total_accel_summed =
+        acceleration(state, p, t, grav_model) +
+        acceleration(state, p, t, moon_third_body) +
+        acceleration(state, p, t, sun_third_body) +
+        acceleration(state, p, t, srp_model) +
+        acceleration(state, p, t, drag_model)
 
-    try
-        f(state, p, t, model_list)
-    catch err
-        err.errors[1]
-    end
-        
-
-    accel = build_dynamics_model(state, p, t, model_list)
-
+    @test total_accel_summed == total_accel
 end

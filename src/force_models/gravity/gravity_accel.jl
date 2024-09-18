@@ -77,7 +77,6 @@ function acceleration(
     return R_J2002ITRF' * accel_itrf
 end
 
-
 """
 Gravitational Keplerian Astro Model struct
 Contains information to compute the acceleration of a Gravitational Harmonics Model acting on a spacecraft.
@@ -85,12 +84,10 @@ Contains information to compute the acceleration of a Gravitational Harmonics Mo
 # Fields
 - `μ::Number`: The gravitational potential constant of the central body.
 """
-@with_kw struct KeplerianGravityAstroModel{MT} <: AbstractGravityAstroModel where {
-    MT<:Number
-}
+@with_kw struct KeplerianGravityAstroModel{MT} <:
+                AbstractGravityAstroModel where {MT<:Number}
     μ::MT = μ_EARTH
 end
-
 
 """
     acceleration(u::AbstractArray, p::ComponentVector, t::Number, grav_model::KeplerianGravityAstroModel)
@@ -115,5 +112,4 @@ function acceleration(
     r_norm = norm(r)
 
     return SVector{3}((-grav_model.μ / (r_norm^3)) * r)
-
 end

@@ -1,28 +1,28 @@
 @testset "Celestial Body Construction" begin
     sun = SunBody()
-    @test sun.μ == 1.32712440018E11
+    @test sun.μ == μ_SUN
     @test sun.name == :Sun
-    @test sun.Req == 6.955E5
+    @test sun.Req == R_SUN
 
     moon = MoonBody()
-    @test moon.μ == 4.90486959E3
+    @test moon.μ == μ_MOON
     @test moon.name == :Moon
-    @test moon.Req == 1738.1
+    @test moon.Req == R_MOON
 end
 
 @testset "Test Low Precision Celestial Body Construction" begin
     sun = SunBody(; T=Float32)
-    @test sun.μ == Float32(1.32712440018E11)
+    @test sun.μ == Float32(μ_SUN)
 
     typeof(sun.μ)
 
     @test sun.name == :Sun
-    @test sun.Req == Float32(6.955E5)
+    @test sun.Req == Float32(R_SUN)
 
     moon = MoonBody(; T=Float32)
-    @test moon.μ == Float32(4.90486959E3)
+    @test moon.μ == Float32(μ_MOON)
     @test moon.name == :Moon
-    @test moon.Req == Float32(1738.1)
+    @test moon.Req == Float32(R_MOON)
 end
 
 @testset "Test Custom Celestial Body Construction" begin

@@ -1,5 +1,11 @@
 export R_SUN,
-    R_EARTH, SPEED_OF_LIGHT, SOLAR_FLUX, μ_MOON, μ_SUN, EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
+    R_EARTH,
+    R_MOON,
+    SPEED_OF_LIGHT,
+    SOLAR_FLUX,
+    μ_MOON,
+    μ_SUN,
+    EARTH_ANGULAR_MOMENTUM_PER_UNIT_MASS
 
 # Radius of the Sun [km]
 const R_SUN::Float64 = 6.955E5
