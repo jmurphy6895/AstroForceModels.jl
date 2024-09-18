@@ -33,14 +33,15 @@
     using AllocCheck
 
     @check_allocs f(u, p, t, models) = build_dynamics_model(u, p, t, models)
-    
+    model_list = [grav_model, sun_third_body, moon_third_body, srp_model, drag_model]
+
     try
-        f(state, p, t, [grav_model, sun_third_body, moon_third_body, srp_model, drag_model])
+        f(state, p, t, model_list)
     catch err
         err.errors[1]
     end
         
 
-    accel = build_dynamics_model(state, p, t, [grav_model, sun_third_body, moon_third_body, srp_model, drag_model])
+    accel = build_dynamics_model(state, p, t, model_list)
 
 end
