@@ -63,7 +63,10 @@ function acceleration(
 
     #TODO: INTERNAL DATE REPRESENTATION TO JD
     # Compute the ITRF acceleration of the spacecraft
-    time = DateTime(jd_to_date(p.JD + t / 86400.0)...)
+    date = jd_to_date(p.JD + t / 86400.0)
+    sec = floor(date[6])
+    ms = floor((date[6] - floor(date[6])) * 1000.0)
+    time = DateTime(date[1], date[2], date[3], date[4], date[5], sec, ms)
     accel_itrf =
         GravityModels.gravitational_acceleration(
             grav_model.gravity_model,
