@@ -107,7 +107,7 @@ function srp_accel(
     R_Earth::Number=R_EARTH,
     Ψ::Number=SOLAR_FLUX,
 ) where {UT}
-    sat_pos = SVector{3,UT}(u[1], u[2], u[3])
+    sat_pos = SVector{3,UT}(u[1:3])
 
     # Compute the lighting factor
     F = shadow_model(sat_pos, sun_pos, ShadowModel; R_Sun=R_Sun, R_Earth=R_Earth)

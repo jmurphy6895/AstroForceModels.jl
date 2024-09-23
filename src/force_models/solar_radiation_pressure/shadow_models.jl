@@ -13,12 +13,11 @@
 #   [1]
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-export Conical, Conical_Simplified, Cylindrical, INPE
+export Conical, Cylindrical, No_Shadow
 abstract type ShadowModelType end
 struct Conical <: ShadowModelType end
-struct Conical_Simplified <: ShadowModelType end
 struct Cylindrical <: ShadowModelType end
-struct INPE <: ShadowModelType end
+struct No_Shadow <: ShadowModelType end
 
 export shadow_model
 """
@@ -42,89 +41,22 @@ Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Ea
     sun_pos::AbstractArray,
     ShadowModel::Cylindrical;
     R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
+    R_Occulting::Number=R_EARTH,
 )
-    sat_pos = @view(sat_pos[1:3])
+    sat_pos = SVector{3}(sat_pos[1:3])
+    sun_direction = SVector{3}(normalize(sun_pos))
 
     # Compute dot product between sun and satellite positions
-    dp_sun_sat = dot(normalize(sun_pos), sat_pos)
+    dp_sun_sat = dot(sun_direction, sat_pos)
 
-    return if (
-        dp_sun_sat > 0.0 || norm(sat_pos - dp_sun_sat * normalize(sun_pos)) > R_Earth
-    )
-        1.0
-    else
-        0.0
-    end
-end
-
-@inline function shadow_model(
-    sat_pos::AbstractArray,
-    sun_pos::AbstractArray,
-    ShadowModel::INPE;
-    R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
-)
-    sun_pos_mag = norm(sun_pos)
-    sat_pos_mag = norm(sat_pos)
-
-    # Umbra
-    Xu = R_Earth * sun_pos_mag / (R_Sun - R_Earth)
-    Au = asin(R_Earth / Xu)
-
-    # Prenumbra
-    Xp = R_Earth * sun_pos_mag / (R_Sun + R_Earth)
-    Ap = asin(R_Earth / Xp)
-
-    # Projection of the Satellite Position onto the Sun Direction
-    r_sat_i = dot(sat_pos, normalize(sun_pos)) * sun_pos / sun_pos_mag
-
-    # Distance of the Umbral Cone and the Spacecraft
-    δi = norm(sat_pos - r_sat_i)
-
-    # Umbra Cone Terminator at Spacecraft Location
-    ep_i = (Xu - sat_pos_mag) * tan(Au)
-
-    # Prenumbra Cone Terminator at Spacecraft Location
-    Kp_i = (Xp + sat_pos_mag) * tan(Ap)
-
-    # SRP Scaling Factor
-    F = 1.0
-
-    if dot(sat_pos / sat_pos_mag, sun_pos / sun_pos_mag) < 0.0
-        if δi < ep_i
-            F = 0.0
-        elseif δi < Kp_i
-            F = 1.0 - (δi - ep_i) / (Kp_i - ep_i)
-        end
-    end
-
-    return F
-end
-
-@inline function shadow_model(
-    sat_pos::AbstractArray,
-    sun_pos::AbstractArray,
-    ShadowModel::Conical_Simplified;
-    R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
-)
-    R_spacecraft_Sun = sat_pos - sun_pos
-
-    con_a = asin(R_Sun / norm(R_spacecraft_Sun))
-    con_b = asin(R_Earth / norm(sat_pos))
-
-    con_c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
-
-    if con_c ≥ (con_b + con_a)
+    if dp_sun_sat >= 0.0 || norm(sat_pos - dp_sun_sat * sun_direction) > R_Occulting
         shadow_factor = 1.0
-    elseif con_c < (con_b - con_a)
+    else 
         shadow_factor = 0.0
-    else
-        shadow_factor = 0.5 + (con_c - con_b) / (2.0 * con_a)
     end
 
     return shadow_factor
+
 end
 
 @inline function shadow_model(
@@ -134,25 +66,30 @@ end
     R_Sun::Number=R_SUN,
     R_Earth::Number=R_EARTH,
 )
-    R_spacecraft_Sun = sat_pos - sun_pos
 
-    con_a = asin(R_Sun / norm(R_spacecraft_Sun))
-    con_b = asin(R_Earth / norm(sat_pos))
+    # Montenbruck, Oliver, Eberhard Gill, and F. H. Lutze. "Satellite orbits: models, methods, and applications." Appl. Mech. Rev. 55.2 (2002): B27-B28.
+    # https://link.springer.com/book/10.1007/978-3-642-58351-3
+    # Section 3.4.2
 
-    con_c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
+    R_spacecraft_Sun = SVector{3}(sat_pos - sun_pos)
 
-    if con_c ≥ (con_b + con_a)
+    a = asin(R_Sun / norm(R_spacecraft_Sun))
+    b = asin(R_Earth / norm(sat_pos))
+
+    c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
+
+    if c ≥ (b + a)
         shadow_factor = 1.0
-    elseif con_c < (con_b - con_a)
+    elseif c < (b - a)
         shadow_factor = 0.0
-    elseif con_c < (con_a - con_b)
-        shadow_factor = 1.0 - (con_b^2.0) / (con_a^2.0)
+    elseif c < (a - b)
+        shadow_factor = 1.0 - (b^2.0) / (a^2.0)
     else
-        x = (con_c^2.0 + con_a^2.0 - con_b^2.0) / (2.0 * con_c)
-        y = √(con_a^2.0 - x^2.0)
+        x = (c^2.0 + a^2.0 - b^2.0) / (2.0 * c)
+        y = √(a^2.0 - x^2.0)
         area =
-            con_a^2.0 * acos(x / con_a) + con_b^2.0 * acos((con_c - x) / con_b) - con_c * y
-        shadow_factor = 1.0 - area / (π * con_a^2.0)
+            a^2.0 * acos(x / a) + b^2.0 * acos((c - x) / b) - c * y
+        shadow_factor = 1.0 - area / (π * a^2.0)
     end
 
     return shadow_factor
