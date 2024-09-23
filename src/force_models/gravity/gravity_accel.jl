@@ -111,7 +111,7 @@ parameters of an object.
 function acceleration(
     u::AbstractArray, p::ComponentVector, t::Number, grav_model::KeplerianGravityAstroModel
 )
-    r = SVector{3}(u[1], u[2], u[3])
+    r = SVector{3}(u[1:3])
     r_norm = norm(r)
 
     return SVector{3}((-grav_model.μ / (r_norm^3)) * r)
