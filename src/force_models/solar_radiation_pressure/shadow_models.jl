@@ -51,12 +51,11 @@ Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Ea
 
     if dp_sun_sat >= 0.0 || norm(sat_pos - dp_sun_sat * sun_direction) > R_Occulting
         shadow_factor = 1.0
-    else 
+    else
         shadow_factor = 0.0
     end
 
     return shadow_factor
-
 end
 
 @inline function shadow_model(
@@ -87,8 +86,7 @@ end
     else
         x = (c^2.0 + a^2.0 - b^2.0) / (2.0 * c)
         y = √(a^2.0 - x^2.0)
-        area =
-            a^2.0 * acos(x / a) + b^2.0 * acos((c - x) / b) - c * y
+        area = a^2.0 * acos(x / a) + b^2.0 * acos((c - x) / b) - c * y
         shadow_factor = 1.0 - area / (π * a^2.0)
     end
 
@@ -98,7 +96,7 @@ end
 @inline function shadow_model(
     sat_pos::AbstractArray,
     sun_pos::AbstractArray,
-    ShadowModel::None;
+    ShadowModel::No_Shadow;
     R_Sun::Number=R_SUN,
     R_Occulting::Number=R_EARTH,
 )

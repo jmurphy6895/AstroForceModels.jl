@@ -66,7 +66,7 @@ function acceleration(
 end
 
 """
-    srp_accel(u::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, Ψ::Number, RC::Number, t::Number; ShadowModel::ShadowModelType)
+    srp_accel(u::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Occulting::Number, Ψ::Number, RC::Number, t::Number; ShadowModel::ShadowModelType)
 
 Compute the Acceleration from Solar Radiaiton Pressure
 
@@ -85,7 +85,7 @@ force can be computed using the a Cannonball model with the following equation
 - `u::AbstractArray`: The current state of the spacecraft in the central body's inertial frame.
 - `sun_pos::AbstractArray`: The current position of the Sun.
 - `R_Sun::Number`: The radius of the Sun.
-- `R_Earth::Number`: The radius of the Earth.
+- `R_Occulting::Number`: The radius of the Earth.
 - `Ψ::Number`: Solar Constant at 1 Astronomical Unit.
 - `RC::Number`: The solar ballistic coefficient of the satellite -- (Area/mass) * Reflectivity Coefficient [kg/m^2].
 - `t::Number`: The current time of the Simulation
@@ -104,13 +104,13 @@ function srp_accel(
     RC::Number;
     ShadowModel::ShadowModelType=Conical(),
     R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
+    R_Occulting::Number=R_EARTH,
     Ψ::Number=SOLAR_FLUX,
 ) where {UT}
     sat_pos = SVector{3,UT}(u[1:3])
 
     # Compute the lighting factor
-    F = shadow_model(sat_pos, sun_pos, ShadowModel; R_Sun=R_Sun, R_Earth=R_Earth)
+    F = shadow_model(sat_pos, sun_pos, ShadowModel; R_Sun=R_Sun, R_Occulting=R_Occulting)
 
     # Compute the Vector Between the Satellite and Sun
     R_spacecraft_Sun = sat_pos - sun_pos
