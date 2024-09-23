@@ -21,7 +21,7 @@ struct No_Shadow <: ShadowModelType end
 
 export shadow_model
 """
-    shadow_model(sat_pos::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Earth::Number, t::Number, ShadowModel::ShadowModelType)
+    shadow_model(sat_pos::AbstractArray, sun_pos::AbstractArray, R_Sun::Number, R_Occulting::Number, t::Number, ShadowModel::ShadowModelType)
 Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Earth's Shadow
 
 # Arguments
@@ -29,7 +29,7 @@ Computes the Lighting Factor of the Sun occur from the Umbra and Prenumbra of Ea
 - `sat_pos::AbstractArray`: The current satellite position.
 - `sun_pos::AbstractArray`: The current Sun position.
 - `R_Sun::Number`: The radius of the Sun.
-- `R_Earth::Number`: The radius of the Earth.
+- `R_Occulting::Number`: The radius of the Occulting Body.
 - `ShadowModel::ShadowModelType`: The Earth shadow model to use. Current Options -- Cylindrical, Conical, Conical_Simplified, None
 
 # Returns
@@ -64,7 +64,7 @@ end
     sun_pos::AbstractArray,
     ShadowModel::Conical;
     R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
+    R_Occulting::Number=R_EARTH,
 )
 
     # Montenbruck, Oliver, Eberhard Gill, and F. H. Lutze. "Satellite orbits: models, methods, and applications." Appl. Mech. Rev. 55.2 (2002): B27-B28.
@@ -74,7 +74,7 @@ end
     R_spacecraft_Sun = SVector{3}(sat_pos - sun_pos)
 
     a = asin(R_Sun / norm(R_spacecraft_Sun))
-    b = asin(R_Earth / norm(sat_pos))
+    b = asin(R_Occulting / norm(sat_pos))
 
     c = angle_between_vectors(R_spacecraft_Sun, sat_pos)
 
@@ -100,7 +100,7 @@ end
     sun_pos::AbstractArray,
     ShadowModel::None;
     R_Sun::Number=R_SUN,
-    R_Earth::Number=R_EARTH,
+    R_Occulting::Number=R_EARTH,
 )
     return 1.0
 end
