@@ -24,7 +24,8 @@ Contains information to compute the acceleration of a SRP a spacecraft.
 - `satellite_srp_model::AbstractSatelliteDragModel`: The satellite srp model for computing the ballistic coefficient.
 - `sun_data::ThirdBodyModel`: The data to compute the Sun's position.
 """
-@with_kw struct SRPAstroModel{ST,SDT,EoT,SMT} <: AbstractNonPotentialBasedForce where {
+@with_kw struct SRPAstroModel{ST,SDT,EoT,SMT,RST,ROT,PT,AUT} <:
+                AbstractNonPotentialBasedForce where {
     ST<:AbstractSatelliteSRPModel,
     SDT<:ThirdBodyModel,
     EoT<:Union{EopIau1980,EopIau2000A},
@@ -34,6 +35,11 @@ Contains information to compute the acceleration of a SRP a spacecraft.
     sun_data::SDT
     eop_data::EoT
     shadow_model::SMT = Conical()
+
+    R_Sun::RST = R_SUN
+    R_Occulting::ROT = R_EARTH
+    Ψ::PT = SOLAR_FLUX
+    AU::AUT = ASTRONOMICAL_UNIT
 end
 
 """
@@ -62,7 +68,16 @@ function acceleration(
     RC = reflectivity_ballistic_coefficient(u, p, t, srp_model.satellite_srp_model)
 
     # Return the 3-Dimensional SRP Force
-    return srp_accel(u, sun_pos, RC; ShadowModel=srp_model.shadow_model)
+    return srp_accel(
+        u,
+        sun_pos,
+        RC;
+        ShadowModel=srp_model.shadow_model,
+        R_Sun=srp_model.R_Sun,
+        R_Occulting=srp_model.R_Occulting,
+        Ψ=srp_model.Ψ,
+        AU=srp_model.AU,
+    )
 end
 
 """
@@ -106,6 +121,7 @@ function srp_accel(
     R_Sun::Number=R_SUN,
     R_Occulting::Number=R_EARTH,
     Ψ::Number=SOLAR_FLUX,
+    AU::Number=ASTRONOMICAL_UNIT,
 ) where {UT}
     sat_pos = SVector{3,UT}(u[1:3])
 
@@ -118,7 +134,7 @@ function srp_accel(
     #Compute the SRP Force
     return SVector{3}(
         (
-            F * RC * Ψ * (ASTRONOMICAL_UNIT / norm(R_spacecraft_Sun))^2 * R_spacecraft_Sun /
+            F * RC * Ψ * (AU / norm(R_spacecraft_Sun))^2 * R_spacecraft_Sun /
             norm(R_spacecraft_Sun)
         ) / 1E3,
     )
