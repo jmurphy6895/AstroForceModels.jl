@@ -45,7 +45,7 @@ function compute_density end
 
     # Compute the JB2008 density if the point is less than 1000km altitude otherwise it's 0.0
     return (geodetic_pos[3] < 1000E3) *
-           AtmosphericModels.jb2008(JD, geodetic_pos...).total_density
+           AtmosphericModels.jb2008(JD, geodetic_pos...; verbose=Val(false)).total_density
 end
 
 @inline function compute_density(
@@ -58,7 +58,7 @@ end
 
     # Compute the JR1971 density if the point is less than 2500km altitude otherwise it's 0.0
     return (geodetic_pos[3] < 2500E3) *
-           AtmosphericModels.jr1971(JD, geodetic_pos...).total_density
+           AtmosphericModels.jr1971(JD, geodetic_pos...; verbose=Val(false)).total_density
 end
 
 @inline function compute_density(
@@ -71,7 +71,7 @@ end
 
     # Compute the MSIS2000 density if the point is less than 1000km altitude otherwise it's 0.0
     return (geodetic_pos[3] < 1000E3) *
-           AtmosphericModels.nrlmsise00(JD, geodetic_pos...).total_density
+           AtmosphericModels.nrlmsise00(JD, geodetic_pos...; verbose=Val(false)).total_density
 end
 
 @inline function compute_density(

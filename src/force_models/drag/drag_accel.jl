@@ -106,11 +106,11 @@ The acceleration from drag is then computed with a cannonball model as
     AT = promote_type(UT, RT, BT, WT, TT)
 
     # Compute Apparent Velocity w.r.t the Atmosphere using the Transport Theorem
-    apparent_vel = @view(u[4:6]) - cross(ω_vec, @view(u[1:3]))
+    apparent_vel = SVector{3}(u[4], u[5], u[6]) - cross(ω_vec, SVector{3}(u[1], u[2], u[3]))
 
     # Scaled by 1E3 to convert to km/s
     # TODO: HANDLE UNITS BETTER
-    accel = SVector{3,AT}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) * 1E3)
+    accel = (-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3
 
     return accel
 end

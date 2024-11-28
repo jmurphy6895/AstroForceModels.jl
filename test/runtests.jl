@@ -2,6 +2,7 @@ using AllocCheck
 using Aqua
 using AstroForceModels
 using ComponentArrays
+using JET
 using LinearAlgebra
 using SatelliteToolboxAtmosphericModels
 using SatelliteToolboxCelestialBodies
@@ -9,6 +10,9 @@ using SatelliteToolboxGravityModels
 using SatelliteToolboxTransformations
 using SpaceIndices
 using Test
+
+using DifferentiationInterface
+using FiniteDiff, ForwardDiff, Diffractor, Enzyme, Mooncake, PolyesterForwardDiff, Zygote
 
 @testset "AstroForceModels.jl" begin
     # Drag Tests
@@ -36,8 +40,21 @@ using Test
     include("test_dynamics_builder.jl")
 end
 
+const _BACKENDS = (
+    ("ForwardDiff", AutoForwardDiff()),
+    ("Diffractor", AutoDiffractor()),
+    ("Enzyme", AutoEnzyme()),
+    ("Mooncake", AutoMooncake(;config=nothing)),
+    ("PolyesterForwardDiff", AutoPolyesterForwardDiff()),
+    ("Zygote", AutoZygote()),
+)
+
 @testset "Aqua.jl" begin
     Aqua.test_all(AstroForceModels; ambiguities=(recursive = false))
+end
+
+@testset "JET Testing" begin
+    rep = JET.test_package(AstroForceModels; toplevel_logger=nothing, target_modules=(@__MODULE__,))
 end
 
 #TODO: GET THESE WORKING
