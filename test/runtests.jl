@@ -49,6 +49,14 @@ const _BACKENDS = (
     ("Zygote", AutoZygote()),
 )
 
+@testset "Differentiability" begin
+    include("differentiability/test_drag.jl")
+    include("differentiability/test_srp.jl")
+    include("differentiability/test_gravity.jl")
+    include("differentiability/test_relativity.jl")
+    include("differentiability/test_third_body.jl")
+end
+
 @testset "Aqua.jl" begin
     Aqua.test_all(AstroForceModels; ambiguities=(recursive = false))
 end
