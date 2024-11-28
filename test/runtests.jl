@@ -44,7 +44,7 @@ const _BACKENDS = (
     ("ForwardDiff", AutoForwardDiff()),
     ("Diffractor", AutoDiffractor()),
     ("Enzyme", AutoEnzyme()),
-    ("Mooncake", AutoMooncake(;config=nothing)),
+    ("Mooncake", AutoMooncake(; config=nothing)),
     ("PolyesterForwardDiff", AutoPolyesterForwardDiff()),
     ("Zygote", AutoZygote()),
 )
@@ -62,7 +62,9 @@ end
 end
 
 @testset "JET Testing" begin
-    rep = JET.test_package(AstroForceModels; toplevel_logger=nothing, target_modules=(@__MODULE__,))
+    rep = JET.test_package(
+        AstroForceModels; toplevel_logger=nothing, target_modules=(@__MODULE__,)
+    )
 end
 
 #TODO: GET THESE WORKING

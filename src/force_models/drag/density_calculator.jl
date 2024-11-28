@@ -71,7 +71,9 @@ end
 
     # Compute the MSIS2000 density if the point is less than 1000km altitude otherwise it's 0.0
     return (geodetic_pos[3] < 1000E3) *
-           AtmosphericModels.nrlmsise00(JD, geodetic_pos...; verbose=Val(false)).total_density
+           AtmosphericModels.nrlmsise00(
+        JD, geodetic_pos...; verbose=Val(false)
+    ).total_density
 end
 
 @inline function compute_density(

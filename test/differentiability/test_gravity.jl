@@ -15,7 +15,7 @@ const _BACKENDS = (
     ("ForwardDiff", AutoForwardDiff()),
     ("Diffractor", AutoDiffractor()),
     ("Enzyme", AutoEnzyme()),
-    ("Mooncake", AutoMooncake(;config=nothing)),
+    ("Mooncake", AutoMooncake(; config=nothing)),
     ("PolyesterForwardDiff", AutoPolyesterForwardDiff()),
     ("Zygote", AutoZygote()),
 )
@@ -24,7 +24,6 @@ const _BACKENDS = (
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING A RESHAPE (AstroForceModels.jl)
 @testset "Harmonics Differentiability State" begin
-
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
     t = 0.0
@@ -45,32 +44,27 @@ const _BACKENDS = (
         -1.1880157328553503
     ] #km, km/s
 
-    for backend ∈ _BACKENDS
+    for backend in _BACKENDS
         if backend[1] == "Diffractor" || backend[1] == "Enzyme" || backend[1] == "Zygote"
             continue
         end
-        testname = "Gravity Differentiability " * backend[1] 
+        testname = "Gravity Differentiability " * backend[1]
         @testset "$testname" begin
             f_fd, df_fd = value_and_jacobian(
-                (x) -> acceleration(x, p, t, grav_model),
-                AutoFiniteDiff(),
-                state
+                (x) -> acceleration(x, p, t, grav_model), AutoFiniteDiff(), state
             )
-        
+
             f_ad, df_ad = value_and_jacobian(
-                (x) -> Array(acceleration(x, p, t, grav_model)),
-                backend[2],
-                state
+                (x) -> Array(acceleration(x, p, t, grav_model)), backend[2], state
             )
 
             @test f_fd ≈ f_ad
-            @test df_fd ≈ df_ad rtol=2e-1
+            @test df_fd ≈ df_ad rtol = 2e-1
         end
     end
 end
 
 @testset "Harmonics Differentiability Time" begin
-
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
     t = 0.0
@@ -91,26 +85,22 @@ end
         -1.1880157328553503
     ] #km, km/s
 
-    for backend ∈ _BACKENDS
+    for backend in _BACKENDS
         if backend[1] == "Diffractor" || backend[1] == "Enzyme" || backend[1] == "Zygote"
             continue
         end
-        testname = "Gravity Differentiability " * backend[1] 
+        testname = "Gravity Differentiability " * backend[1]
         @testset "$testname" begin
             f_fd, df_fd = value_and_derivative(
-                (x) -> acceleration(state, p, x, grav_model),
-                AutoFiniteDiff(),
-                t
+                (x) -> acceleration(state, p, x, grav_model), AutoFiniteDiff(), t
             )
-        
+
             f_ad, df_ad = value_and_derivative(
-                (x) -> Array(acceleration(state, p, x, grav_model)),
-                backend[2],
-                t
+                (x) -> Array(acceleration(state, p, x, grav_model)), backend[2], t
             )
 
             @test f_fd ≈ f_ad
-            @test df_fd ≈ df_ad atol=1e-10
+            @test df_fd ≈ df_ad atol = 1e-10
         end
     end
 end
