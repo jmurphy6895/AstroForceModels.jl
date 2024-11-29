@@ -1,11 +1,10 @@
 #! DIFFRACTOR FAILING AT TIME CONVERSION -- EXTRAPOLATION (SatelliteToolboxTransformations.jl)
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING A TUPLE SUBTRACTION (AstroForceModels.jl)
-
 @testset "Third Body Differentiability State" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
-    eop_data = fetch_iers_eop()
     p = ComponentVector(; JD=JD)
+    eop_data = fetch_iers_eop()
     t = 0.0
 
     sun_third_body = ThirdBodyModel(; body=SunBody(), eop_data=eop_data)

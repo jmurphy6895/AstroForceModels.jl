@@ -1,7 +1,6 @@
 #! DIFFRACTOR FAILING AT TIME CONVERSION -- EXTRAPOLATION (SatelliteToolboxTransformations.jl)
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING WITH SOME KIND OF MISSHAPE? (AstroForceModels.jl)
-
 @testset "SRP Differentiability State" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
@@ -51,6 +50,7 @@ end
 @testset "SRP Differentiability Time" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
+    t = 0.0
 
     eop_data = fetch_iers_eop()
 
@@ -96,6 +96,7 @@ end
 @testset "SRP Differentiability SRP Parameters" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
+    t = 0.0
 
     eop_data = fetch_iers_eop()
 

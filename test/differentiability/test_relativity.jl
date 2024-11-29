@@ -1,7 +1,6 @@
 #! DIFFRACTOR FAILING AT TIME CONVERSION -- EXTRAPOLATION (SatelliteToolboxTransformations.jl)
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING A RESHAPE (AstroForceModels.jl)
-
 @testset "Relativity Differentiability State" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
     p = ComponentVector(; JD=JD)
@@ -24,7 +23,7 @@
         if backend[1] == "Diffractor" || backend[1] == "Enzyme" || backend[1] == "Zygote"
             continue
         end
-        testname = "Third Body Differentiability " * backend[1]
+        testname = "Relativity Differentiability " * backend[1]
         @testset "$testname" begin
             f_fd, df_fd = value_and_jacobian(
                 (x) -> acceleration(x, p, t, relativity_model), AutoFiniteDiff(), state

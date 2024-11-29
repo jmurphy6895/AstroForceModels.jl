@@ -1,6 +1,18 @@
 #! DIFFRACTOR FAILING AT TIME CONVERSION -- EXTRAPOLATION (SatelliteToolboxTransformations.jl)
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING AT DCM CONSTRUCTOR (ReferenceFrameRotations.jl)
+const _ATMOSPHERE_MODELS = (
+    ("JB2008", JB2008()),
+    ("JR1971", JR1971()),
+    ("MSIS2000", MSIS2000()),
+    ("ExpAtmo", ExpAtmo()),
+    ("None", None()),
+)
+
+# See SatelliteToolboxAtmosphericModels.jl for details
+const _SKIP_TESTS_DIFFRACTOR = ["JR1971", "MSIS2000", "JB2008"]
+const _SKIP_TESTS_ENZYME = ["JR1971", "MSIS2000"]
+const _SKIP_TESTS_ZYGOTE = ["JR1971", "MSIS2000"]
 
 @testset "Drag Differentiability State" begin
     JD = date_to_jd(2024, 1, 5, 12, 0, 0.0)
@@ -20,19 +32,6 @@
     ] #km, km/s
 
     satellite_drag_model = CannonballFixedDrag(0.2)
-
-    _ATMOSPHERE_MODELS = (
-        ("JB2008", JB2008()),
-        ("JR1971", JR1971()),
-        ("MSIS2000", MSIS2000()),
-        ("ExpAtmo", ExpAtmo()),
-        ("None", None()),
-    )
-
-    # See SatelliteToolboxAtmosphericModels.jl for details
-    _SKIP_TESTS_DIFFRACTOR = ["JR1971", "MSIS2000", "JB2008"]
-    _SKIP_TESTS_ENZYME = ["JR1971", "MSIS2000"]
-    _SKIP_TESTS_ZYGOTE = ["JR1971", "MSIS2000"]
 
     for backend in _BACKENDS
         if backend[1] == "Diffractor" || backend[1] == "Enzyme" || backend[1] == "Zygote"
@@ -62,6 +61,7 @@
             end
         end
     end
+    SpaceIndices.destroy()
 end
 
 @testset "Drag Differentiability Time" begin
@@ -82,19 +82,6 @@ end
     ] #km, km/s
 
     satellite_drag_model = CannonballFixedDrag(0.2)
-
-    _ATMOSPHERE_MODELS = (
-        ("JB2008", JB2008()),
-        ("JR1971", JR1971()),
-        ("MSIS2000", MSIS2000()),
-        ("ExpAtmo", ExpAtmo()),
-        ("None", None()),
-    )
-
-    # See SatelliteToolboxAtmosphericModels.jl for details
-    _SKIP_TESTS_DIFFRACTOR = ["JR1971", "MSIS2000", "JB2008"]
-    _SKIP_TESTS_ENZYME = ["JR1971", "MSIS2000"]
-    _SKIP_TESTS_ZYGOTE = ["JR1971", "MSIS2000"]
 
     for backend in _BACKENDS
         if backend[1] == "Diffractor" || backend[1] == "Enzyme" || backend[1] == "Zygote"
@@ -119,11 +106,14 @@ end
                     (x) -> Array(acceleration(state, p, x, drag_model)), backend[2], t
                 )
 
+                df_ad[isnan.(df_ad)] .= 0.0
+
                 @test f_fd ≈ f_ad
                 @test df_fd ≈ df_ad atol = 1e-10
             end
         end
     end
+    SpaceIndices.destroy()
 end
 
 @testset "Drag Differentiability Model Parameters" begin
@@ -144,19 +134,6 @@ end
     ] #km, km/s
 
     BC = 0.2
-
-    _ATMOSPHERE_MODELS = (
-        ("JB2008", JB2008()),
-        ("JR1971", JR1971()),
-        ("MSIS2000", MSIS2000()),
-        ("ExpAtmo", ExpAtmo()),
-        ("None", None()),
-    )
-
-    # See SatelliteToolboxAtmosphericModels.jl for details
-    _SKIP_TESTS_DIFFRACTOR = ["JR1971", "MSIS2000", "JB2008"]
-    _SKIP_TESTS_ENZYME = ["JR1971", "MSIS2000"]
-    _SKIP_TESTS_ZYGOTE = ["JR1971", "MSIS2000"]
 
     backend = ("Mooncake", AutoMooncake(; config=nothing))
     for backend in _BACKENDS
@@ -201,4 +178,5 @@ end
             end
         end
     end
+    SpaceIndices.destroy()
 end

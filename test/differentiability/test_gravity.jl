@@ -1,25 +1,3 @@
-using AstroForceModels
-using ComponentArrays
-using LinearAlgebra
-using SatelliteToolboxAtmosphericModels
-using SatelliteToolboxCelestialBodies
-using SatelliteToolboxGravityModels
-using SatelliteToolboxTransformations
-using SpaceIndices
-using Test
-
-using DifferentiationInterface
-using FiniteDiff, ForwardDiff, Diffractor, Enzyme, Mooncake, PolyesterForwardDiff, Zygote
-
-const _BACKENDS = (
-    ("ForwardDiff", AutoForwardDiff()),
-    ("Diffractor", AutoDiffractor()),
-    ("Enzyme", AutoEnzyme()),
-    ("Mooncake", AutoMooncake(; config=nothing)),
-    ("PolyesterForwardDiff", AutoPolyesterForwardDiff()),
-    ("Zygote", AutoZygote()),
-)
-
 #! DIFFRACTOR FAILING AT TIME CONVERSION -- EXTRAPOLATION (SatelliteToolboxTransformations.jl)
 #! ENZYME FAILING AT READ-ONLY ARG? (AstroForceModels.jl)
 #! ZYGOTE FAILING A RESHAPE (AstroForceModels.jl)
