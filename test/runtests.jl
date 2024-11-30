@@ -40,6 +40,8 @@ using FiniteDiff, ForwardDiff, Diffractor, Enzyme, Mooncake, PolyesterForwardDif
     include("test_dynamics_builder.jl")
 end
 
+using DifferentiationInterface, ForwardDiff, FiniteDiff, Mooncake
+
 const _BACKENDS = (
     ("ForwardDiff", AutoForwardDiff()),
     ("Diffractor", AutoDiffractor()),
@@ -55,6 +57,7 @@ const _BACKENDS = (
     include("differentiability/test_gravity.jl")
     include("differentiability/test_relativity.jl")
     include("differentiability/test_third_body.jl")
+    include("differentiability/test_dynamics_builder.jl")
 end
 
 @testset "Aqua.jl" begin

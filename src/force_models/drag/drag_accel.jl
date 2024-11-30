@@ -66,7 +66,7 @@ function acceleration(
     BC = ballistic_coefficient(u, p, t, drag_model.satellite_drag_model)
 
     # Return the 3-Dimensional Drag Force
-    return drag_accel(u, rho, BC, ω_vec, t)
+    return drag_accel(u, rho, BC, ω_vec)
 end
 
 """
@@ -101,16 +101,16 @@ The acceleration from drag is then computed with a cannonball model as
 - `SVector{3}{Number}`: Inertial acceleration from drag
 """
 @inline function drag_accel(
-    u::AbstractArray{UT}, rho::RT, BC::BT, ω_vec::AbstractArray{WT}, t::TT
-) where {UT,RT,BT,WT,TT}
-    AT = promote_type(UT, RT, BT, WT, TT)
+    u::AbstractArray{UT}, rho::RT, BC::BT, ω_vec::AbstractArray{WT}
+) where {UT,RT,BT,WT}
+    AT = promote_type(UT, RT, BT, WT)
 
     # Compute Apparent Velocity w.r.t the Atmosphere using the Transport Theorem
     apparent_vel = SVector{3}(u[4], u[5], u[6]) - cross(ω_vec, SVector{3}(u[1], u[2], u[3]))
 
     # Scaled by 1E3 to convert to km/s
     # TODO: HANDLE UNITS BETTER
-    accel = (-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3
+    accel = SVector{3,AT}((-0.5 * BC * rho * norm(apparent_vel) * apparent_vel) .* 1E3)
 
     return accel
 end

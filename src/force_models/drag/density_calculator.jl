@@ -40,7 +40,7 @@ function compute_density end
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
-    ecef_pos = R_J20002ITRF * @view(u[1:3])
+    ecef_pos = R_J20002ITRF * SVector{3}(u[1], u[2], u[3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
 
     # Compute the JB2008 density if the point is less than 1000km altitude otherwise it's 0.0
@@ -53,7 +53,7 @@ end
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
-    ecef_pos = R_J20002ITRF * @view(u[1:3])
+    ecef_pos = R_J20002ITRF * SVector{3}(u[1], u[2], u[3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
 
     # Compute the JR1971 density if the point is less than 2500km altitude otherwise it's 0.0
@@ -66,7 +66,7 @@ end
 )
     # Compute the geodetic position of the provided point
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
-    ecef_pos = R_J20002ITRF * @view(u[1:3])
+    ecef_pos = R_J20002ITRF * SVector{3}(u[1], u[2], u[3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
 
     # Compute the MSIS2000 density if the point is less than 1000km altitude otherwise it's 0.0
@@ -81,7 +81,7 @@ end
 )
     # Compute the JR1971 density if the point is less than 2500km altitude otherwise it's 0.0
     R_J20002ITRF = r_eci_to_ecef(DCM, J2000(), ITRF(), JD, eop_data)
-    ecef_pos = R_J20002ITRF * @view(u[1:3])
+    ecef_pos = R_J20002ITRF * SVector{3}(u[1], u[2], u[3])
     geodetic_pos = ecef_to_geodetic(ecef_pos .* 1E3)
 
     # Compute the ExpAtmo density
